@@ -1,27 +1,68 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes, css } from 'styled-components';
-import { Send, Bot, User, Sparkles, Brain, Clock, ShoppingBag, Star, TrendingUp } from 'lucide-react';
+import { Send, Bot, User, Sparkles, Brain, Clock, ShoppingBag, Star, TrendingUp, MessageCircle, Zap, Shield } from 'lucide-react';
 import { useMutation } from 'react-query';
 import toast from 'react-hot-toast';
 import { getMockResponse } from '../utils/geminiMock';
 import { sampleProducts } from '../data/products';
 
-const ChatbotContainer = styled.div`
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 2rem;
+// Keyframes
+const spin = keyframes`
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 `;
 
+const pulse = keyframes`
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+`;
+
+const typing = keyframes`
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-8px); }
+`;
+
+const float = keyframes`
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+`;
+
+const slideIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+const fadeIn = keyframes`
+  from { opacity: 0; }
+  to { opacity: 1; }
+`;
+
+// Main Container
+const ChatbotContainer = styled.div`
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+`;
+
+// Header Section
 const ChatHeader = styled.div`
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   position: relative;
 `;
 
 const Title = styled.h1`
-  font-size: 2.5rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #1e293b, #3b82f6);
+  font-size: 3rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #1e293b 0%, #3b82f6 50%, #8b5cf6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 1rem;
@@ -29,48 +70,22 @@ const Title = styled.h1`
   align-items: center;
   justify-content: center;
   gap: 1rem;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+    flex-direction: column;
+  }
 `;
 
 const Subtitle = styled.p`
   color: #64748b;
   font-size: 1.125rem;
-  margin-bottom: 2rem;
-`;
-
-const spin = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-`;
-
-const pulse = keyframes`
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.8;
-  }
-`;
-
-const typing = keyframes`
-  0%, 60%, 100% {
-    transform: translateY(0);
-  }
-  30% {
-    transform: translateY(-10px);
-  }
-`;
-
-const float = keyframes`
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 `;
 
 const SystemStatus = styled.div`
@@ -79,163 +94,156 @@ const SystemStatus = styled.div`
   gap: 0.5rem;
   background: linear-gradient(135deg, #10b981, #059669);
   color: white;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.5rem;
   border-radius: 2rem;
   font-size: 0.875rem;
   font-weight: 600;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
   animation: ${css`${pulse} 2s infinite`};
+  margin-bottom: 2rem;
 `;
 
+// Chat Container
 const ChatContainer = styled.div`
   background: white;
-  border-radius: 1.5rem;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  border-radius: 2rem;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   height: 700px;
   display: flex;
   flex-direction: column;
   border: 1px solid #e2e8f0;
+  position: relative;
 `;
 
 const MessagesContainer = styled.div`
   flex: 1;
-  padding: 2rem;
   overflow-y: auto;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-`;
-
-const Message = styled.div`
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-  max-width: 85%;
-  animation: slideIn 0.3s ease-out;
   
-  ${props => props.isUser ? 'margin-left: auto;' : 'margin-right: auto;'}
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
   
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  &::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
   }
 `;
 
+// Message Components
+const Message = styled.div`
+  display: flex;
+  gap: 1rem;
+  animation: ${css`${slideIn} 0.3s ease-out`};
+  
+  ${props => props.isUser && `
+    flex-direction: row-reverse;
+  `}
+`;
+
 const Avatar = styled.div`
-  width: 3rem;
-  height: 3rem;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
   font-weight: 600;
+  font-size: 1rem;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
   
-  ${props => props.isUser 
-    ? `
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      &:hover {
-        transform: scale(1.1);
-        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
-      }
-    ` 
-    : `
-      background: linear-gradient(135deg, #10b981, #059669);
-      &:hover {
-        transform: scale(1.1);
-        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
-      }
-    `
-  }
+  ${props => props.isUser ? `
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+  ` : `
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    animation: ${css`${float} 3s ease-in-out infinite`};
+  `}
 `;
 
 const MessageBubble = styled.div`
-  padding: 1.5rem;
+  max-width: 70%;
+  padding: 1rem 1.5rem;
   border-radius: 1.5rem;
-  max-width: 100%;
-  word-wrap: break-word;
   position: relative;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  line-height: 1.6;
   
-  ${props => props.isUser 
-    ? `
-      background: linear-gradient(135deg, #3b82f6, #2563eb);
-      color: white;
-      border-bottom-right-radius: 0.5rem;
-      margin-left: auto;
-      max-width: 75%;
-    ` 
-    : `
-      background: white;
-      color: #1e293b;
-      border-bottom-left-radius: 0.5rem;
-      border-left: 4px solid #10b981;
-      max-width: 75%;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    `
-  }
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.15);
-  }
+  ${props => props.isUser ? `
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    border-bottom-right-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  ` : `
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+    border-bottom-left-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  `}
 `;
 
 const MessageHeader = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.75rem;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
   font-size: 0.875rem;
+  font-weight: 600;
+  
+  ${props => props.isUser ? `
+    color: rgba(255, 255, 255, 0.9);
+  ` : `
+    color: #64748b;
+  `}
+`;
+
+const MessageTime = styled.span`
+  font-size: 0.75rem;
   opacity: 0.8;
 `;
 
-const MessageTime = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-size: 0.75rem;
+const MessageContent = styled.div`
+  white-space: pre-line;
+  
+  strong {
+    font-weight: 700;
+  }
+  
+  em {
+    font-style: italic;
+  }
+  
+  ul, ol {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+  }
+  
+  li {
+    margin: 0.25rem 0;
+  }
 `;
 
-const GeminiBadge = styled.div`
-  position: absolute;
-  top: -8px;
-  left: 12px;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 1rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
-  animation: ${css`${pulse} 2s infinite`};
-`;
-
+// Typing Indicator
 const TypingIndicator = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #64748b;
-  font-style: italic;
-  padding: 1rem;
-  background: white;
-  border-radius: 1rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  border-radius: 1.5rem;
+  border-bottom-left-radius: 0.5rem;
+  max-width: 70%;
+  animation: ${css`${fadeIn} 0.3s ease-out`};
 `;
 
 const TypingDots = styled.div`
@@ -244,10 +252,10 @@ const TypingDots = styled.div`
 `;
 
 const TypingDot = styled.div`
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: #94a3b8;
+  background: #64748b;
   animation: ${css`${typing} 1.4s infinite`};
   
   &:nth-child(2) {
@@ -259,23 +267,25 @@ const TypingDot = styled.div`
   }
 `;
 
+// Input Section
 const InputContainer = styled.div`
-  padding: 2rem;
+  padding: 1.5rem 2rem;
+  background: #f8fafc;
   border-top: 1px solid #e2e8f0;
   display: flex;
   gap: 1rem;
   align-items: center;
-  background: white;
 `;
 
 const Input = styled.input`
   flex: 1;
   padding: 1rem 1.5rem;
   border: 2px solid #e2e8f0;
-  border-radius: 1rem;
+  border-radius: 2rem;
   font-size: 1rem;
   outline: none;
   transition: all 0.3s ease;
+  background: white;
   
   &:focus {
     border-color: #3b82f6;
@@ -292,8 +302,8 @@ const Input = styled.input`
 `;
 
 const SendButton = styled.button`
-  width: 3.5rem;
-  height: 3.5rem;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
@@ -307,7 +317,7 @@ const SendButton = styled.button`
   
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
   }
   
   &:active {
@@ -315,20 +325,20 @@ const SendButton = styled.button`
   }
   
   &:disabled {
-    background: #94a3b8;
+    opacity: 0.6;
     cursor: not-allowed;
     transform: none;
-    box-shadow: none;
   }
 `;
 
+// Suggestions Section
 const SuggestionsContainer = styled.div`
   padding: 1.5rem 2rem;
-  border-top: 1px solid #e2e8f0;
   background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
 `;
 
-const SuggestionsTitle = styled.h4`
+const SuggestionsTitle = styled.h3`
   font-size: 1rem;
   font-weight: 600;
   color: #374151;
@@ -339,49 +349,53 @@ const SuggestionsTitle = styled.h4`
 `;
 
 const SuggestionsGrid = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
 `;
 
 const SuggestionButton = styled.button`
-  padding: 0.75rem 1.25rem;
+  padding: 0.75rem 1rem;
   background: white;
   border: 2px solid #e2e8f0;
   border-radius: 1rem;
-  color: #64748b;
   font-size: 0.875rem;
   font-weight: 500;
+  color: #374151;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  text-align: left;
   
   &:hover {
-    background: #3b82f6;
-    color: white;
     border-color: #3b82f6;
+    background: #f0f9ff;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
   }
   
   &:active {
     transform: translateY(0);
   }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 `;
 
+// Welcome Message
 const WelcomeMessage = styled.div`
   text-align: center;
   padding: 3rem 2rem;
-  color: #64748b;
-  background: white;
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
   border-radius: 1.5rem;
   margin: 2rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #bae6fd;
 `;
 
 const WelcomeIcon = styled.div`
-  width: 5rem;
-  height: 5rem;
+  width: 80px;
+  height: 80px;
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   border-radius: 50%;
   display: flex;
@@ -389,75 +403,51 @@ const WelcomeIcon = styled.div`
   justify-content: center;
   margin: 0 auto 1.5rem;
   color: white;
-  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+  font-size: 2rem;
   animation: ${css`${float} 3s ease-in-out infinite`};
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
 `;
 
-const ProductCard = styled.div`
-  background: white;
-  border-radius: 1rem;
-  padding: 1rem;
-  margin: 0.5rem 0;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+const WelcomeTitle = styled.h2`
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1rem;
+`;
+
+const WelcomeText = styled.p`
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+`;
+
+const WelcomeFeatures = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+`;
+
+const FeatureItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #64748b;
   
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  svg {
+    color: #3b82f6;
   }
 `;
 
-const ProductName = styled.div`
-  font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 0.25rem;
-`;
-
-const ProductPrice = styled.div`
-  color: #3b82f6;
-  font-weight: 700;
-  font-size: 1.125rem;
-`;
-
-const ProductRating = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  color: #f59e0b;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-`;
-
-const SpinningSparkles = styled(Sparkles)`
-  animation: ${css`${spin} 1s linear infinite`};
-`;
-
 function Chatbot() {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      text: "Merhaba! Ben ShopWise AI asistanınız. Size nasıl yardımcı olabilirim? Ürün arama, öneriler veya herhangi bir sorunuz için buradayım! 🤖✨",
-      isUser: false,
-      timestamp: new Date(),
-      isWelcome: true
-    }
-  ]);
+  const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
-  
-  const [suggestions] = useState([
-    "500 TL altında spor ayakkabı öner",
-    "En popüler ürünler neler?",
-    "Kampanyalar hakkında bilgi ver",
-    "Teslimat süreleri nedir?",
-    "iPhone modellerini karşılaştır",
-    "En iyi laptop önerileri"
-  ]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
@@ -575,9 +565,8 @@ function Chatbot() {
         setMessages(prev => [...prev, newMessage]);
       },
       onError: (error) => {
+        console.error('Message send error:', error);
         toast.error('Mesaj gönderilemedi. Lütfen tekrar deneyin.');
-        console.error('Chat error:', error);
-        setIsTyping(false);
       }
     }
   );
@@ -593,21 +582,13 @@ function Chatbot() {
     };
 
     setMessages(prev => [...prev, userMessage]);
-    sendMessageMutation.mutate(inputValue);
     setInputValue('');
+    sendMessageMutation.mutate(inputValue);
   };
 
   const handleSuggestionClick = (suggestion) => {
     setInputValue(suggestion);
-    // Auto-send suggestion
-    const userMessage = {
-      id: Date.now(),
-      text: suggestion,
-      isUser: true,
-      timestamp: new Date()
-    };
-    setMessages(prev => [...prev, userMessage]);
-    sendMessageMutation.mutate(suggestion);
+    handleSendMessage();
   };
 
   const handleKeyPress = (e) => {
@@ -618,97 +599,125 @@ function Chatbot() {
   };
 
   const formatTime = (date) => {
-    return date.toLocaleTimeString('tr-TR', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    return date.toLocaleTimeString('tr-TR', {
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
+
+  const suggestions = [
+    "500 TL altında spor ayakkabı öner",
+    "En popüler ürünler neler?",
+    "Kampanyalar hakkında bilgi ver",
+    "Teslimat süreleri nedir?",
+    "iPhone 15 hakkında bilgi ver",
+    "Laptop önerileri al"
+  ];
 
   return (
     <ChatbotContainer>
       <ChatHeader>
         <Title>
-          <Brain size={32} />
+          <Sparkles />
           ShopWise AI Asistanı
-          <SystemStatus>
-            <Sparkles size={16} />
-            Sistem Aktif
-          </SystemStatus>
+          <Brain />
         </Title>
         <Subtitle>
-          Yapay zeka destekli akıllı asistan ile ürün arama, öneriler ve destek
+          <MessageCircle />
+          Gemini destekli akıllı e-ticaret asistanınız
         </Subtitle>
+        <SystemStatus>
+          <Zap />
+          Sistem Aktif
+        </SystemStatus>
       </ChatHeader>
 
       <ChatContainer>
         <MessagesContainer>
-          {messages.length === 1 ? (
+          {messages.length === 0 && (
             <WelcomeMessage>
               <WelcomeIcon>
-                <Bot size={32} />
+                <Bot />
               </WelcomeIcon>
-              <h3 style={{ color: '#1e293b', marginBottom: '1rem' }}>
-                ShopWise AI Asistanına Hoş Geldiniz! 🤖
-              </h3>
-              <p style={{ lineHeight: '1.6' }}>
-                Size en iyi ürün önerilerini sunmak, sorularınızı yanıtlamak ve 
-                alışveriş deneyiminizi kişiselleştirmek için buradayım. 
-                Hızlı önerilerden birini seçin veya kendi sorunuzu yazın!
-              </p>
+              <WelcomeTitle>Hoş Geldiniz! 👋</WelcomeTitle>
+              <WelcomeText>
+                Ben ShopWise AI asistanınız. Size ürün önerileri, kampanya bilgileri ve 
+                her türlü e-ticaret konusunda yardımcı olabilirim. Aşağıdaki önerilerden 
+                birini seçebilir veya kendi sorunuzu yazabilirsiniz.
+              </WelcomeText>
+              <WelcomeFeatures>
+                <FeatureItem>
+                  <Shield />
+                  Güvenli Alışveriş
+                </FeatureItem>
+                <FeatureItem>
+                  <Star />
+                  En İyi Fiyatlar
+                </FeatureItem>
+                <FeatureItem>
+                  <ShoppingBag />
+                  Hızlı Teslimat
+                </FeatureItem>
+              </WelcomeFeatures>
             </WelcomeMessage>
-          ) : (
-            messages.map((message) => (
-              <Message key={message.id} isUser={message.isUser}>
-                <Avatar isUser={message.isUser}>
-                  {message.isUser ? <User size={18} /> : <Bot size={18} />}
-                </Avatar>
-                <MessageBubble isUser={message.isUser}>
-                  {!message.isUser && !message.isWelcome && (
-                    <GeminiBadge>
-                      <Sparkles size={12} />
-                      AI
-                    </GeminiBadge>
-                  )}
-                  <MessageHeader>
-                    <span>{message.isUser ? 'Siz' : 'ShopWise AI'}</span>
-                    <MessageTime>
-                      <Clock size={12} />
-                      {formatTime(message.timestamp)}
-                    </MessageTime>
-                  </MessageHeader>
-                  <div style={{ whiteSpace: 'pre-line' }}>
-                    {message.text}
-                  </div>
-                </MessageBubble>
-              </Message>
-            ))
           )}
-          
+
+          {messages.map((message) => (
+            <Message key={message.id} isUser={message.isUser}>
+              <Avatar isUser={message.isUser}>
+                {message.isUser ? <User size={20} /> : <Bot size={20} />}
+              </Avatar>
+              <MessageBubble isUser={message.isUser}>
+                <MessageHeader isUser={message.isUser}>
+                  {message.isUser ? 'Siz' : 'Gemini AI'}
+                  <MessageTime>{formatTime(message.timestamp)}</MessageTime>
+                </MessageHeader>
+                <MessageContent>{message.text}</MessageContent>
+              </MessageBubble>
+            </Message>
+          ))}
+
           {isTyping && (
             <Message isUser={false}>
               <Avatar isUser={false}>
-                <Bot size={18} />
+                <Bot size={20} />
               </Avatar>
-              <MessageBubble isUser={false}>
-                <TypingIndicator>
-                  <SpinningSparkles size={16} />
-                  Yazıyor...
-                  <TypingDots>
-                    <TypingDot />
-                    <TypingDot />
-                    <TypingDot />
-                  </TypingDots>
-                </TypingIndicator>
-              </MessageBubble>
+              <TypingIndicator>
+                <MessageHeader isUser={false}>
+                  Gemini AI
+                  <MessageTime>yazıyor...</MessageTime>
+                </MessageHeader>
+                <TypingDots>
+                  <TypingDot />
+                  <TypingDot />
+                  <TypingDot />
+                </TypingDots>
+              </TypingIndicator>
             </Message>
           )}
-          
+
           <div ref={messagesEndRef} />
         </MessagesContainer>
 
+        <InputContainer>
+          <Input
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Mesajınızı yazın..."
+            disabled={isTyping}
+          />
+          <SendButton
+            onClick={handleSendMessage}
+            disabled={!inputValue.trim() || isTyping}
+          >
+            <Send size={20} />
+          </SendButton>
+        </InputContainer>
+
         <SuggestionsContainer>
           <SuggestionsTitle>
-            <TrendingUp size={16} />
+            <TrendingUp />
             Hızlı Öneriler
           </SuggestionsTitle>
           <SuggestionsGrid>
@@ -716,29 +725,13 @@ function Chatbot() {
               <SuggestionButton
                 key={index}
                 onClick={() => handleSuggestionClick(suggestion)}
-                disabled={sendMessageMutation.isLoading || isTyping}
+                disabled={isTyping}
               >
                 {suggestion}
               </SuggestionButton>
             ))}
           </SuggestionsGrid>
         </SuggestionsContainer>
-
-        <InputContainer>
-          <Input
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Mesajınızı yazın... (Enter ile gönderin)"
-            disabled={sendMessageMutation.isLoading || isTyping}
-          />
-          <SendButton
-            onClick={handleSendMessage}
-            disabled={!inputValue.trim() || sendMessageMutation.isLoading || isTyping}
-          >
-            <Send size={18} />
-          </SendButton>
-        </InputContainer>
       </ChatContainer>
     </ChatbotContainer>
   );
