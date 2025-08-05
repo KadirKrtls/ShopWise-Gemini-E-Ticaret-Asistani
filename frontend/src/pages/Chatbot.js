@@ -96,7 +96,7 @@ const SystemStatus = styled.div`
   font-size: 0.875rem;
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-  animation: ${pulse} 2s infinite;
+  animation: ${css`${pulse} 2s infinite`};
   margin-bottom: 2rem;
 `;
 
@@ -140,7 +140,7 @@ const MessagesContainer = styled.div`
 const Message = styled.div`
   display: flex;
   gap: 1rem;
-  animation: ${slideIn} 0.3s ease-out;
+  animation: ${css`${slideIn} 0.3s ease-out`};
   
   ${props => props.isUser && `
     flex-direction: row-reverse;
@@ -164,7 +164,7 @@ const Avatar = styled.div`
   ` : `
     background: linear-gradient(135deg, #10b981, #059669);
     color: white;
-    animation: ${float} 3s ease-in-out infinite;
+    animation: ${css`${float} 3s ease-in-out infinite`};
   `}
 `;
 
@@ -240,7 +240,7 @@ const TypingIndicator = styled.div`
   border-radius: 1.5rem;
   border-bottom-left-radius: 0.5rem;
   max-width: 70%;
-  animation: ${fadeIn} 0.3s ease-out;
+  animation: ${css`${fadeIn} 0.3s ease-out`};
 `;
 
 const TypingDots = styled.div`
@@ -253,7 +253,7 @@ const TypingDot = styled.div`
   height: 8px;
   border-radius: 50%;
   background: #64748b;
-      animation: ${typing} 1.4s infinite;
+      animation: ${css`${typing} 1.4s infinite`};
   
   &:nth-child(2) {
     animation-delay: 0.2s;
@@ -401,7 +401,7 @@ const WelcomeIcon = styled.div`
   margin: 0 auto 1.5rem;
   color: white;
   font-size: 2rem;
-      animation: ${float} 3s ease-in-out infinite;
+      animation: ${css`${float} 3s ease-in-out infinite`};
   box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
 `;
 
