@@ -8,7 +8,7 @@ genai.configure(api_key=settings.GEMINI_API_KEY)
 
 class GeminiService:
     def __init__(self):
-        self.model = genai.GenerativeModel('gemini-pro')
+        self.model = genai.GenerativeModel('gemini-1.5-pro')
     
     async def generate_product_description(self, product_name: str, category: str, features: List[str]) -> str:
         """Ürün açıklaması üretir"""
@@ -175,6 +175,7 @@ class GeminiService:
             response = self.model.generate_content(prompt)
             return response.text
         except Exception as e:
+            print(f"Gemini API Error: {str(e)}")
             return "Üzgünüm, şu anda size yardımcı olamıyorum. Lütfen daha sonra tekrar deneyin."
 
 # Global instance

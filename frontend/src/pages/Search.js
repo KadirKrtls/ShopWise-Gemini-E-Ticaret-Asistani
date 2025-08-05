@@ -165,43 +165,7 @@ const ProductsGrid = styled.div`
   gap: 1rem;
 `;
 
-const ProductCard = styled.div`
-  background: white;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  border: 1px solid #e2e8f0;
-  transition: transform 0.2s ease;
-  
-  &:hover {
-    transform: translateY(-2px);
-  }
-`;
 
-const ProductName = styled.h4`
-  font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 0.5rem;
-`;
-
-const ProductPrice = styled.div`
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: #3b82f6;
-  margin-bottom: 0.5rem;
-`;
-
-const ProductCategory = styled.div`
-  font-size: 0.875rem;
-  color: #64748b;
-  margin-bottom: 0.5rem;
-`;
-
-const ProductBrand = styled.div`
-  font-size: 0.875rem;
-  color: #64748b;
-  font-weight: 500;
-`;
 
 const SearchParams = styled.div`
   background: #eff6ff;

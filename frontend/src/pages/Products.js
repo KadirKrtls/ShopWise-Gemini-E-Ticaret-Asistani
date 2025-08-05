@@ -1,26 +1,68 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
-import { Plus, Package, Sparkles, Star, TrendingUp } from 'lucide-react';
-import { useMutation, useQuery } from 'react-query';
-import axios from 'axios';
+import styled, { keyframes, css } from 'styled-components';
+import { 
+  Plus, 
+  Package, 
+  Sparkles, 
+  Star, 
+  TrendingUp,
+  Brain,
+  Eye,
+  Search,
+  Filter,
+  Grid,
+  List
+} from 'lucide-react';
 import toast from 'react-hot-toast';
+import ProductCard from '../components/ProductCard';
+import { sampleProducts } from '../data/products';
 
 const ProductsContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
+  padding: 2rem;
 `;
 
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
 `;
 
 const Title = styled.h1`
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1e293b;
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #1e293b, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+const pulse = keyframes`
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+`;
+
+const GeminiStatus = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  animation: ${css`${pulse} 2s infinite`};
+`;
+
+const Controls = styled.div`
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 `;
 
 const CreateButton = styled.button`
@@ -28,47 +70,118 @@ const CreateButton = styled.button`
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background: #3b82f6;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
   border: none;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  
-  &:hover {
-    background: #2563eb;
-  }
-`;
-
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-`;
-
-const Card = styled.div`
-  background: white;
   border-radius: 0.75rem;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  border: 1px solid #e2e8f0;
-  transition: transform 0.2s ease;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
   
   &:hover {
     transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
   }
 `;
 
-const CardHeader = styled.div`
+const SearchBar = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  transition: border-color 0.3s ease;
+  
+  &:focus-within {
+    border-color: #3b82f6;
+  }
+`;
+
+const SearchInput = styled.input`
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  width: 300px;
+  
+  &::placeholder {
+    color: #94a3b8;
+  }
+`;
+
+const FilterButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.5rem;
+  color: #64748b;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: #3b82f6;
+    color: #3b82f6;
+  }
+`;
+
+const ViewToggle = styled.div`
+  display: flex;
+  background: #f1f5f9;
+  border-radius: 0.5rem;
+  padding: 0.25rem;
+`;
+
+const ViewButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  border-radius: 0.25rem;
+  background: ${props => props.active ? 'white' : 'transparent'};
+  color: ${props => props.active ? '#3b82f6' : '#64748b'};
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    color: #3b82f6;
+  }
+`;
+
+const StatsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+`;
+
+const StatCard = styled.div`
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const StatHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 1rem;
 `;
 
-const CardIcon = styled.div`
+const StatIcon = styled.div`
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 0.5rem;
@@ -76,380 +189,306 @@ const CardIcon = styled.div`
   align-items: center;
   justify-content: center;
   color: white;
+  background: ${props => props.color || '#3b82f6'};
 `;
 
-const CardTitle = styled.h3`
-  font-size: 1.125rem;
-  font-weight: 600;
+const StatValue = styled.div`
+  font-size: 2rem;
+  font-weight: 800;
   color: #1e293b;
+  margin-bottom: 0.5rem;
 `;
 
-const CardDescription = styled.p`
+const StatLabel = styled.div`
+  font-size: 0.875rem;
   color: #64748b;
-  line-height: 1.6;
-  margin-bottom: 1rem;
-  position: relative;
+  font-weight: 500;
 `;
 
-const GeminiBadge = styled.div`
-  position: absolute;
-  top: -8px;
-  right: 0;
-  background: #10b981;
-  color: white;
-  padding: 2px 8px;
-  border-radius: 12px;
+const StatChange = styled.div`
   font-size: 0.75rem;
+  color: ${props => props.positive ? '#10b981' : '#ef4444'};
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 0.25rem;
 `;
 
-const Modal = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+const ProductsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+`;
+
+const EmptyState = styled.div`
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #64748b;
+`;
+
+const EmptyIcon = styled.div`
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: #f1f5f9;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  margin: 0 auto 1rem;
+  color: #94a3b8;
 `;
 
-const ModalContent = styled.div`
-  background: white;
-  border-radius: 0.75rem;
-  padding: 2rem;
-  width: 90%;
-  max-width: 500px;
-  max-height: 80vh;
-  overflow-y: auto;
-`;
-
-const ModalHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-`;
-
-const ModalTitle = styled.h2`
+const EmptyTitle = styled.h3`
   font-size: 1.5rem;
   font-weight: 600;
   color: #1e293b;
+  margin-bottom: 0.5rem;
 `;
 
-const CloseButton = styled.button`
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
+const EmptyDescription = styled.p`
   color: #64748b;
-  
-  &:hover {
-    color: #1e293b;
+  margin-bottom: 2rem;
+`;
+
+const GeminiHighlight = styled.div`
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  color: white;
+  margin-bottom: 3rem;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: ${css`${pulse} 4s ease-in-out infinite`};
   }
 `;
 
-const Form = styled.form`
+const GeminiTitle = styled.h2`
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 0.5rem;
 `;
 
-const Label = styled.label`
-  font-weight: 500;
-  color: #374151;
+const GeminiDescription = styled.p`
+  opacity: 0.9;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
 `;
 
-const Input = styled.input`
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  
-  &:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  }
-`;
-
-const Textarea = styled.textarea`
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  min-height: 100px;
-  resize: vertical;
-  
-  &:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  }
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
+const GeminiFeatures = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
-  margin-top: 1rem;
 `;
 
-const Button = styled.button`
-  flex: 1;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  
-  ${props => props.primary ? `
-    background: #3b82f6;
-    color: white;
-    border: none;
-    
-    &:hover {
-      background: #2563eb;
-    }
-  ` : `
-    background: white;
-    color: #64748b;
-    border: 1px solid #d1d5db;
-    
-    &:hover {
-      background: #f8fafc;
-    }
-  `}
-`;
-
-const LoadingSpinner = styled.div`
+const GeminiFeature = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 2rem;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  opacity: 0.9;
 `;
 
 function Products() {
-  const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    category: '',
-    price: '',
-    brand: '',
-    stock: '',
-    features: ''
-  });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [viewMode, setViewMode] = useState('grid');
 
-  const createProductMutation = useMutation(
-    async (productData) => {
-      const response = await axios.post('/api/v1/products/', productData);
-      return response.data;
-    },
-    {
-      onSuccess: () => {
-        toast.success('Ürün başarıyla oluşturuldu!');
-        setShowModal(false);
-        setFormData({
-          name: '',
-          category: '',
-          price: '',
-          brand: '',
-          stock: '',
-          features: ''
-        });
-      },
-      onError: (error) => {
-        toast.error('Ürün oluşturulamadı. Lütfen tekrar deneyin.');
-        console.error('Create product error:', error);
-      }
-    }
+  const filteredProducts = sampleProducts.filter(product => 
+    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const generateDescriptionMutation = useMutation(
-    async (data) => {
-      const response = await axios.post('/api/v1/products/generate-description', {
-        product_name: data.name,
-        category: data.category,
-        features: data.features.split(',').map(f => f.trim()).filter(f => f)
-      });
-      return response.data;
-    },
-    {
-      onSuccess: (data) => {
-        toast.success('Ürün açıklaması oluşturuldu!');
-        console.log('Generated description:', data.description);
-      },
-      onError: (error) => {
-        toast.error('Açıklama oluşturulamadı.');
-        console.error('Generate description error:', error);
-      }
-    }
-  );
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const productData = {
-      ...formData,
-      price: parseFloat(formData.price),
-      stock: parseInt(formData.stock),
-      features: formData.features.split(',').map(f => f.trim()).filter(f => f)
-    };
-    createProductMutation.mutate(productData);
+  const stats = {
+    total: sampleProducts.length,
+    active: sampleProducts.filter(p => p.inStock).length,
+    trending: sampleProducts.filter(p => p.trendScore > 7).length,
+    discounted: sampleProducts.filter(p => p.discount > 0).length
   };
 
-  const handleGenerateDescription = () => {
-    if (!formData.name || !formData.category) {
-      toast.error('Lütfen ürün adı ve kategori girin.');
-      return;
-    }
-    generateDescriptionMutation.mutate(formData);
+  const handleAddToCart = (product) => {
+    toast.success(`${product.name} sepete eklendi!`);
   };
 
-  const features = [
-    {
-      icon: <Package size={20} />,
-      bgColor: '#3b82f6',
-      title: 'Ürün Yönetimi',
-      description: 'Yeni ürünler ekleyin, mevcut ürünleri düzenleyin ve stok takibi yapın.'
-    },
-    {
-      icon: <Sparkles size={20} />,
-      bgColor: '#10b981',
-      title: 'Otomatik Açıklama',
-      description: 'Gemini AI ile SEO uyumlu ürün açıklamaları otomatik olarak oluşturun.'
-    },
-    {
-      icon: <Star size={20} />,
-      bgColor: '#f59e0b',
-      title: 'Ürün Karşılaştırma',
-      description: 'Benzer ürünleri karşılaştırın ve en iyi seçenekleri bulun.'
-    },
-    {
-      icon: <TrendingUp size={20} />,
-      bgColor: '#ef4444',
-      title: 'Fiyat Takibi',
-      description: 'Ürün fiyatlarını izleyin ve değişikliklerde bildirim alın.'
-    }
-  ];
+  const handleAddToFavorites = (product) => {
+    toast.success(`${product.name} favorilere eklendi!`);
+  };
+
+  const handleCompare = (product) => {
+    toast.success(`${product.name} karşılaştırma listesine eklendi!`);
+  };
+
+  const handleTrackPrice = (product) => {
+    toast.success(`${product.name} fiyat takibine alındı!`);
+  };
 
   return (
     <ProductsContainer>
       <Header>
-        <Title>Ürün Yönetimi</Title>
-        <CreateButton onClick={() => setShowModal(true)}>
-          <Plus size={16} />
-          Yeni Ürün
-        </CreateButton>
+        <Title>
+          <Package size={32} />
+          Ürün Yönetimi
+          <GeminiStatus>
+            <Brain size={16} />
+            Gemini AI Aktif
+          </GeminiStatus>
+        </Title>
+        <Controls>
+          <SearchBar>
+            <Search size={20} color="#94a3b8" />
+            <SearchInput 
+              placeholder="Ürün ara..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </SearchBar>
+          <FilterButton>
+            <Filter size={20} />
+            Filtrele
+          </FilterButton>
+          <ViewToggle>
+            <ViewButton 
+              active={viewMode === 'grid'} 
+              onClick={() => setViewMode('grid')}
+            >
+              <Grid size={20} />
+            </ViewButton>
+            <ViewButton 
+              active={viewMode === 'list'} 
+              onClick={() => setViewMode('list')}
+            >
+              <List size={20} />
+            </ViewButton>
+          </ViewToggle>
+          <CreateButton>
+            <Plus size={20} />
+            Yeni Ürün
+          </CreateButton>
+        </Controls>
       </Header>
 
-      <Grid>
-        {features.map((feature, index) => (
-          <Card key={index}>
-            <CardHeader>
-              <CardIcon style={{ backgroundColor: feature.bgColor }}>
-                {feature.icon}
-              </CardIcon>
-              <CardTitle>{feature.title}</CardTitle>
-            </CardHeader>
-            <CardDescription>{feature.description}</CardDescription>
-          </Card>
-        ))}
-      </Grid>
+      <GeminiHighlight>
+        <GeminiTitle>
+          <Brain size={24} />
+          Gemini AI Ürün Asistanı
+        </GeminiTitle>
+        <GeminiDescription>
+          Otomatik ürün açıklaması oluşturma, SEO optimizasyonu ve akıllı kategorilendirme 
+          ile ürün yönetiminizi kolaylaştırın.
+        </GeminiDescription>
+        <GeminiFeatures>
+          <GeminiFeature>
+            <Sparkles size={16} />
+            Otomatik Açıklama
+          </GeminiFeature>
+          <GeminiFeature>
+            <Star size={16} />
+            SEO Optimizasyonu
+          </GeminiFeature>
+          <GeminiFeature>
+            <TrendingUp size={16} />
+            Trend Analizi
+          </GeminiFeature>
+        </GeminiFeatures>
+      </GeminiHighlight>
 
-      {showModal && (
-        <Modal>
-          <ModalContent>
-            <ModalHeader>
-              <ModalTitle>Yeni Ürün Ekle</ModalTitle>
-              <CloseButton onClick={() => setShowModal(false)}>×</CloseButton>
-            </ModalHeader>
-            
-            <Form onSubmit={handleSubmit}>
-              <FormGroup>
-                <Label>Ürün Adı</Label>
-                <Input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  required
-                />
-              </FormGroup>
-              
-              <FormGroup>
-                <Label>Kategori</Label>
-                <Input
-                  type="text"
-                  value={formData.category}
-                  onChange={(e) => setFormData({...formData, category: e.target.value})}
-                  required
-                />
-              </FormGroup>
-              
-              <FormGroup>
-                <Label>Fiyat (TL)</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={formData.price}
-                  onChange={(e) => setFormData({...formData, price: e.target.value})}
-                  required
-                />
-              </FormGroup>
-              
-              <FormGroup>
-                <Label>Marka</Label>
-                <Input
-                  type="text"
-                  value={formData.brand}
-                  onChange={(e) => setFormData({...formData, brand: e.target.value})}
-                  required
-                />
-              </FormGroup>
-              
-              <FormGroup>
-                <Label>Stok</Label>
-                <Input
-                  type="number"
-                  value={formData.stock}
-                  onChange={(e) => setFormData({...formData, stock: e.target.value})}
-                  required
-                />
-              </FormGroup>
-              
-              <FormGroup>
-                <Label>Özellikler (virgülle ayırın)</Label>
-                <Textarea
-                  value={formData.features}
-                  onChange={(e) => setFormData({...formData, features: e.target.value})}
-                  placeholder="Örn: Su geçirmez, Hafif, Dayanıklı"
-                />
-              </FormGroup>
-              
-              <ButtonGroup>
-                <Button 
-                  type="button" 
-                  onClick={handleGenerateDescription}
-                  disabled={generateDescriptionMutation.isLoading}
-                >
-                  {generateDescriptionMutation.isLoading ? 'Oluşturuluyor...' : 'Açıklama Oluştur'}
-                </Button>
-                <Button type="submit" primary disabled={createProductMutation.isLoading}>
-                  {createProductMutation.isLoading ? 'Kaydediliyor...' : 'Ürün Ekle'}
-                </Button>
-              </ButtonGroup>
-            </Form>
-          </ModalContent>
-        </Modal>
+      <StatsGrid>
+        <StatCard>
+          <StatHeader>
+            <StatIcon color="#3b82f6">
+              <Package size={20} />
+            </StatIcon>
+            <StatChange positive>
+              <TrendingUp size={16} />
+              +15%
+            </StatChange>
+          </StatHeader>
+          <StatValue>{stats.total}</StatValue>
+          <StatLabel>Toplam Ürün</StatLabel>
+        </StatCard>
+
+        <StatCard>
+          <StatHeader>
+            <StatIcon color="#10b981">
+              <Eye size={20} />
+            </StatIcon>
+            <StatChange positive>
+              <TrendingUp size={16} />
+              +8%
+            </StatChange>
+          </StatHeader>
+          <StatValue>{stats.active}</StatValue>
+          <StatLabel>Stokta Olan</StatLabel>
+        </StatCard>
+
+        <StatCard>
+          <StatHeader>
+            <StatIcon color="#f59e0b">
+              <TrendingUp size={20} />
+            </StatIcon>
+            <StatChange positive>
+              <TrendingUp size={16} />
+              +22%
+            </StatChange>
+          </StatHeader>
+          <StatValue>{stats.trending}</StatValue>
+          <StatLabel>Trend Ürün</StatLabel>
+        </StatCard>
+
+        <StatCard>
+          <StatHeader>
+            <StatIcon color="#ef4444">
+              <Star size={20} />
+            </StatIcon>
+            <StatChange positive>
+              <TrendingUp size={16} />
+              +12%
+            </StatChange>
+          </StatHeader>
+          <StatValue>{stats.discounted}</StatValue>
+          <StatLabel>İndirimli</StatLabel>
+        </StatCard>
+      </StatsGrid>
+
+      {filteredProducts.length > 0 ? (
+        <ProductsGrid>
+          {filteredProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              onAddToCart={() => handleAddToCart(product)}
+              onAddToFavorites={() => handleAddToFavorites(product)}
+              onCompare={() => handleCompare(product)}
+              onTrackPrice={() => handleTrackPrice(product)}
+            />
+          ))}
+        </ProductsGrid>
+      ) : (
+        <EmptyState>
+          <EmptyIcon>
+            <Package size={32} />
+          </EmptyIcon>
+          <EmptyTitle>Ürün Bulunamadı</EmptyTitle>
+          <EmptyDescription>
+            Arama kriterlerinize uygun ürün bulunamadı. 
+            Farklı anahtar kelimeler deneyin veya filtreleri değiştirin.
+          </EmptyDescription>
+          <CreateButton>
+            <Plus size={20} />
+            Yeni Ürün Ekle
+          </CreateButton>
+        </EmptyState>
       )}
     </ProductsContainer>
   );
