@@ -78,7 +78,7 @@ const SystemStatus = styled.div`
   font-weight: 600;
   margin-bottom: 2rem;
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-  animation: ${css`${pulse} 2s infinite`};
+  animation: ${pulse} 2s infinite;
 `;
 
 const StatsGrid = styled.div`
@@ -209,8 +209,8 @@ const FeatureIcon = styled.div`
   background: ${props => props.color || '#3b82f6'};
   position: relative;
   
-  ${props => props.animated && css`
-    animation: ${css`${brainFloat} 3s ease-in-out infinite`};
+  ${props => props.animated && `
+    animation: ${brainFloat} 3s ease-in-out infinite;
   `}
 `;
 
@@ -238,7 +238,7 @@ const FeatureBadge = styled.div`
   font-size: 0.875rem;
   font-weight: 600;
   margin-bottom: 1rem;
-  animation: ${css`${pulse} 2s infinite`};
+  animation: ${pulse} 2s infinite;
 `;
 
 const ActionButton = styled.button`
@@ -278,7 +278,7 @@ const GeminiHighlight = styled.div`
     width: 200%;
     height: 200%;
     background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-    animation: ${css`${pulse} 4s ease-in-out infinite`};
+    animation: ${pulse} 4s ease-in-out infinite;
   }
 `;
 

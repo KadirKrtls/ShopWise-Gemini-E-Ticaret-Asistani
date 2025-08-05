@@ -56,7 +56,7 @@ const GeminiStatus = styled.div`
   border-radius: 2rem;
   font-size: 0.875rem;
   font-weight: 600;
-  animation: ${css`${pulse} 2s infinite`};
+  animation: ${pulse} 2s infinite;
 `;
 
 const Controls = styled.div`
@@ -267,7 +267,7 @@ const GeminiHighlight = styled.div`
     width: 200%;
     height: 200%;
     background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-    animation: ${css`${pulse} 4s ease-in-out infinite`};
+    animation: ${pulse} 4s ease-in-out infinite;
   }
 `;
 
