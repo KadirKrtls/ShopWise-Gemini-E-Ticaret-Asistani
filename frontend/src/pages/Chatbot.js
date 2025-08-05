@@ -1,16 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes, css } from 'styled-components';
-import { Send, Bot, User, Sparkles, Brain, Clock, ShoppingBag, Star, TrendingUp, MessageCircle, Zap, Shield } from 'lucide-react';
+import { Send, Bot, User, Sparkles, Brain, ShoppingBag, Star, TrendingUp, MessageCircle, Zap, Shield } from 'lucide-react';
 import { useMutation } from 'react-query';
 import toast from 'react-hot-toast';
-import { getMockResponse } from '../utils/geminiMock';
+
 import { sampleProducts } from '../data/products';
 
 // Keyframes
-const spin = keyframes`
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-`;
+
 
 const pulse = keyframes`
   0%, 100% { opacity: 1; }
@@ -99,7 +96,7 @@ const SystemStatus = styled.div`
   font-size: 0.875rem;
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-  animation: ${css`${pulse} 2s infinite`};
+  animation: ${pulse} 2s infinite;
   margin-bottom: 2rem;
 `;
 
@@ -143,7 +140,7 @@ const MessagesContainer = styled.div`
 const Message = styled.div`
   display: flex;
   gap: 1rem;
-  animation: ${css`${slideIn} 0.3s ease-out`};
+  animation: ${slideIn} 0.3s ease-out;
   
   ${props => props.isUser && `
     flex-direction: row-reverse;
@@ -167,7 +164,7 @@ const Avatar = styled.div`
   ` : `
     background: linear-gradient(135deg, #10b981, #059669);
     color: white;
-    animation: ${css`${float} 3s ease-in-out infinite`};
+    animation: ${float} 3s ease-in-out infinite;
   `}
 `;
 
@@ -243,7 +240,7 @@ const TypingIndicator = styled.div`
   border-radius: 1.5rem;
   border-bottom-left-radius: 0.5rem;
   max-width: 70%;
-  animation: ${css`${fadeIn} 0.3s ease-out`};
+  animation: ${fadeIn} 0.3s ease-out;
 `;
 
 const TypingDots = styled.div`
@@ -256,7 +253,7 @@ const TypingDot = styled.div`
   height: 8px;
   border-radius: 50%;
   background: #64748b;
-  animation: ${css`${typing} 1.4s infinite`};
+      animation: ${typing} 1.4s infinite;
   
   &:nth-child(2) {
     animation-delay: 0.2s;
@@ -404,7 +401,7 @@ const WelcomeIcon = styled.div`
   margin: 0 auto 1.5rem;
   color: white;
   font-size: 2rem;
-  animation: ${css`${float} 3s ease-in-out infinite`};
+      animation: ${float} 3s ease-in-out infinite;
   box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
 `;
 
