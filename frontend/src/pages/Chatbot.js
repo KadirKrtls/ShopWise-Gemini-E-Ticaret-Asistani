@@ -59,6 +59,7 @@ const MessageBubble = styled.div`
   border-radius: 1rem;
   max-width: 100%;
   word-wrap: break-word;
+  position: relative;
   ${props => props.isUser 
     ? `
       background: #3b82f6;
@@ -69,8 +70,24 @@ const MessageBubble = styled.div`
       background: #f1f5f9;
       color: #1e293b;
       border-bottom-left-radius: 0.25rem;
+      border-left: 4px solid #10b981;
     `
   }
+`;
+
+const GeminiBadge = styled.div`
+  position: absolute;
+  top: -8px;
+  left: 12px;
+  background: #10b981;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 `;
 
 const Avatar = styled.div`
@@ -280,6 +297,12 @@ function Chatbot() {
                   {message.isUser ? <User size={16} /> : <Bot size={16} />}
                 </Avatar>
                 <MessageBubble isUser={message.isUser}>
+                  {!message.isUser && (
+                    <GeminiBadge>
+                      <Sparkles size={12} />
+                      Gemini AI
+                    </GeminiBadge>
+                  )}
                   {message.text}
                 </MessageBubble>
               </Message>

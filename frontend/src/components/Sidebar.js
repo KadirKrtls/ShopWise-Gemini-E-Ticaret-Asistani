@@ -8,6 +8,8 @@ import {
   Star, 
   MapPin, 
   Search,
+  Scale,
+  Bell,
   Settings,
   HelpCircle
 } from 'lucide-react';
@@ -101,6 +103,16 @@ function Sidebar() {
       title: 'Arama',
       icon: <Search size={18} />,
       path: '/search'
+    },
+    {
+      title: 'Ürün Karşılaştırma',
+      icon: <Scale size={18} />,
+      path: '/comparison'
+    },
+    {
+      title: 'Fiyat Takibi',
+      icon: <Bell size={18} />,
+      path: '/price-tracking'
     }
   ];
 

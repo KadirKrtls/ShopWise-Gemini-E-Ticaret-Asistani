@@ -88,6 +88,22 @@ const CardDescription = styled.p`
   color: #64748b;
   line-height: 1.6;
   margin-bottom: 1rem;
+  position: relative;
+`;
+
+const GeminiBadge = styled.div`
+  position: absolute;
+  top: -8px;
+  right: 0;
+  background: #10b981;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 `;
 
 const Modal = styled.div`

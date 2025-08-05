@@ -9,6 +9,8 @@ import Products from './pages/Products';
 import Reviews from './pages/Reviews';
 import Addresses from './pages/Addresses';
 import Search from './pages/Search';
+import ProductComparison from './pages/ProductComparison';
+import PriceTracking from './pages/PriceTracking';
 
 const AppContainer = styled.div`
   min-height: 100vh;
@@ -41,6 +43,8 @@ function App() {
             <Route path="/reviews" element={<Reviews />} />
             <Route path="/addresses" element={<Addresses />} />
             <Route path="/search" element={<Search />} />
+            <Route path="/comparison" element={<ProductComparison />} />
+            <Route path="/price-tracking" element={<PriceTracking />} />
           </Routes>
         </ContentArea>
       </MainContent>
