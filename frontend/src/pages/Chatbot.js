@@ -4,6 +4,7 @@ import { Send, Bot, User, Sparkles } from 'lucide-react';
 import { useMutation } from 'react-query';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { getMockResponse } from '../utils/geminiMock';
 
 const ChatbotContainer = styled.div`
   max-width: 800px;
@@ -246,11 +247,9 @@ function Chatbot() {
 
   const sendMessageMutation = useMutation(
     async (message) => {
-      const response = await axios.post('/api/v1/chatbot/chat', {
-        message,
-        context: messages.map(m => `${m.isUser ? 'User' : 'Assistant'}: ${m.text}`).join('\n')
-      });
-      return response.data;
+      // Simulate API call with mock response
+      const response = getMockResponse('chatbot', message);
+      return { response };
     },
     {
       onSuccess: (data) => {

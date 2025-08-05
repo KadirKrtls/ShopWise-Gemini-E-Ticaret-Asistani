@@ -162,16 +162,6 @@ const FeatureCard = styled.div`
     background: linear-gradient(90deg, #10b981, #3b82f6);
   }
 `;
-  border-radius: 0.75rem;
-  padding: 2rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  border: 1px solid #e2e8f0;
-  transition: transform 0.2s ease;
-  
-  &:hover {
-    transform: translateY(-2px);
-  }
-`;
 
 const FeatureIcon = styled.div`
   width: 3rem;

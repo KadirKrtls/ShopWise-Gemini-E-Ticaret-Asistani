@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Search as SearchIcon, TrendingUp, Filter, Sparkles } from 'lucide-react';
+import { Search as SearchIcon, TrendingUp, Sparkles } from 'lucide-react';
 import { useMutation } from 'react-query';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import ProductCard from '../components/ProductCard';
+import { sampleProducts, searchProducts, getTrendingProducts, getDiscountedProducts } from '../data/products';
 
 const SearchContainer = styled.div`
   max-width: 1200px;
@@ -323,16 +325,19 @@ function Search() {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [brand, setBrand] = useState('');
-  const [searchResults, setSearchResults] = useState(null);
+  const [searchResults, setSearchResults] = useState([]);
+  const [showResults, setShowResults] = useState(false);
 
   const searchMutation = useMutation(
     async (searchData) => {
-      const response = await axios.post('/api/v1/search/natural-language', searchData);
-      return response.data;
+      // Simulate API call with local search
+      const results = searchProducts(searchData.query);
+      return { results, total_results: results.length };
     },
     {
       onSuccess: (data) => {
-        setSearchResults(data);
+        setSearchResults(data.results);
+        setShowResults(true);
         toast.success(`${data.total_results} ürün bulundu!`);
       },
       onError: (error) => {
@@ -364,23 +369,8 @@ function Search() {
     setSearchQuery(suggestion);
   };
 
-  const trendingProducts = [
-    {
-      name: 'Nike Air Max 270',
-      price: '899.99 TL',
-      score: 95
-    },
-    {
-      name: 'iPhone 15 Pro',
-      price: '45,999.99 TL',
-      score: 92
-    },
-    {
-      name: 'Samsung Galaxy S24',
-      price: '32,999.99 TL',
-      score: 88
-    }
-  ];
+  const trendingProducts = getTrendingProducts();
+  const discountedProducts = getDiscountedProducts();
 
   const suggestions = [
     { text: '500 TL altında spor ayakkabı', type: 'Fiyat Filtresi' },
@@ -490,48 +480,44 @@ function Search() {
           {trendingProducts.map((product, index) => (
             <TrendingCard key={index}>
               <TrendingProduct>{product.name}</TrendingProduct>
-              <TrendingPrice>{product.price}</TrendingPrice>
-              <TrendingScore>Trend Skoru: {product.score}</TrendingScore>
+              <TrendingPrice>{product.price.toLocaleString()} TL</TrendingPrice>
+              <TrendingScore>Trend Skoru: {product.trendScore}</TrendingScore>
             </TrendingCard>
           ))}
         </TrendingGrid>
       </TrendingSection>
 
-      {searchResults && (
+      {showResults && searchResults.length > 0 && (
         <ResultsContainer>
           <ResultsHeader>
             <ResultsTitle>Arama Sonuçları</ResultsTitle>
-            <ResultsCount>{searchResults.total_results} ürün bulundu</ResultsCount>
+            <ResultsCount>{searchResults.length} ürün bulundu</ResultsCount>
           </ResultsHeader>
 
-          {searchResults.search_params && (
-            <SearchParams>
-              <ParamsTitle>Analiz Edilen Parametreler</ParamsTitle>
-              <ParamsList>
-                {Object.entries(searchResults.search_params).map(([key, value]) => {
-                  if (value && value !== '' && value !== 0) {
-                    return (
-                      <ParamTag key={key}>
-                        {key}: {typeof value === 'object' ? JSON.stringify(value) : value}
-                      </ParamTag>
-                    );
-                  }
-                  return null;
-                })}
-              </ParamsList>
-            </SearchParams>
-          )}
-
           <ProductsGrid>
-            {searchResults.products.map((product) => (
-              <ProductCard key={product.id}>
-                <ProductName>{product.name}</ProductName>
-                <ProductPrice>{product.price} TL</ProductPrice>
-                <ProductCategory>{product.category}</ProductCategory>
-                <ProductBrand>{product.brand}</ProductBrand>
-              </ProductCard>
+            {searchResults.map((product) => (
+              <ProductCard 
+                key={product.id} 
+                product={product}
+                onAddToCart={(product) => toast.success(`${product.name} sepete eklendi!`)}
+                onAddToFavorites={(product) => toast.success(`${product.name} favorilere eklendi!`)}
+                onCompare={(product) => toast.success(`${product.name} karşılaştırmaya eklendi!`)}
+                onTrackPrice={(product) => toast.success(`${product.name} fiyat takibine eklendi!`)}
+              />
             ))}
           </ProductsGrid>
+        </ResultsContainer>
+      )}
+
+      {showResults && searchResults.length === 0 && (
+        <ResultsContainer>
+          <ResultsHeader>
+            <ResultsTitle>Arama Sonuçları</ResultsTitle>
+            <ResultsCount>Ürün bulunamadı</ResultsCount>
+          </ResultsHeader>
+          <div style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+            Aradığınız kriterlere uygun ürün bulunamadı. Farklı anahtar kelimeler deneyin.
+          </div>
         </ResultsContainer>
       )}
     </SearchContainer>
