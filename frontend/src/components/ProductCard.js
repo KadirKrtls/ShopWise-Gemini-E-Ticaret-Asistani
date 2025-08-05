@@ -202,7 +202,6 @@ const TrustScore = styled.div`
 
 function ProductCard({ product, onAddToCart, onAddToFavorites, onCompare, onTrackPrice }) {
   const {
-    id,
     name,
     brand,
     price,
@@ -210,7 +209,6 @@ function ProductCard({ product, onAddToCart, onAddToFavorites, onCompare, onTrac
     rating,
     reviews,
     image,
-    description,
     discount,
     trendScore,
     trustScore,

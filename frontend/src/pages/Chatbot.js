@@ -158,13 +158,13 @@ const Avatar = styled.div`
   font-size: 1rem;
   flex-shrink: 0;
   
-  ${props => props.isUser ? `
+  ${props => props.isUser ? css`
     background: linear-gradient(135deg, #3b82f6, #1d4ed8);
     color: white;
-  ` : `
+  ` : css`
     background: linear-gradient(135deg, #10b981, #059669);
     color: white;
-    animation: ${css`${float} 3s ease-in-out infinite`};
+    animation: ${float} 3s ease-in-out infinite;
   `}
 `;
 
@@ -214,6 +214,7 @@ const MessageContent = styled.div`
   
   strong {
     font-weight: 700;
+    color: #1e293b;
   }
   
   em {
@@ -253,7 +254,7 @@ const TypingDot = styled.div`
   height: 8px;
   border-radius: 50%;
   background: #64748b;
-      animation: ${css`${typing} 1.4s infinite`};
+  animation: ${css`${typing} 1.4s infinite`};
   
   &:nth-child(2) {
     animation-delay: 0.2s;
@@ -401,7 +402,7 @@ const WelcomeIcon = styled.div`
   margin: 0 auto 1.5rem;
   color: white;
   font-size: 2rem;
-      animation: ${css`${float} 3s ease-in-out infinite`};
+  animation: ${css`${float} 3s ease-in-out infinite`};
   box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
 `;
 
@@ -436,6 +437,19 @@ const FeatureItem = styled.div`
     color: #3b82f6;
   }
 `;
+
+// Markdown formatını temizleyen fonksiyon
+const formatMessage = (text) => {
+  if (!text) return '';
+  
+  // **text** formatını <strong>text</strong> yapar
+  let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  
+  // *text* formatını <em>text</em> yapar
+  formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  
+  return formatted;
+};
 
 function Chatbot() {
   const [messages, setMessages] = useState([]);
@@ -669,7 +683,11 @@ function Chatbot() {
                   {message.isUser ? 'Siz' : 'Gemini AI'}
                   <MessageTime>{formatTime(message.timestamp)}</MessageTime>
                 </MessageHeader>
-                <MessageContent>{message.text}</MessageContent>
+                <MessageContent 
+                  dangerouslySetInnerHTML={{ 
+                    __html: formatMessage(message.text) 
+                  }} 
+                />
               </MessageBubble>
             </Message>
           ))}

@@ -2,19 +2,13 @@ import React, { useState, useEffect } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { 
   Package, 
-  Star, 
-  MapPin, 
-  Search, 
   TrendingUp,
   Users,
   Zap,
   Brain,
   Sparkles,
   Activity,
-  ArrowRight,
-  ShoppingCart,
-  Scale,
-  Bell
+  ShoppingCart
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -209,8 +203,8 @@ const FeatureIcon = styled.div`
   background: ${props => props.color || '#3b82f6'};
   position: relative;
   
-  ${props => props.animated && `
-    animation: ${css`${brainFloat} 3s ease-in-out infinite`};
+  ${props => props.animated && css`
+    animation: ${brainFloat} 3s ease-in-out infinite;
   `}
 `;
 
@@ -463,7 +457,7 @@ function Home() {
         </StatCard>
       </StatsGrid>
 
-      <FeaturesGrid>
+      {/* <FeaturesGrid>
         <FeatureCard 
           gradient="linear-gradient(90deg, #667eea, #764ba2)"
           onClick={() => handleCardClick('/chatbot')}
@@ -619,7 +613,7 @@ function Home() {
             <ArrowRight size={16} />
           </ActionButton>
         </FeatureCard>
-      </FeaturesGrid>
+      </FeaturesGrid> */}
     </HomeContainer>
   );
 }
