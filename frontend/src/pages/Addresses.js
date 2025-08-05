@@ -29,10 +29,17 @@ const Subtitle = styled.p`
 
 const FormSection = styled.div`
   background: white;
-  border-radius: 0.75rem;
-  padding: 2rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   margin-bottom: 2rem;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
 `;
 
 const SectionTitle = styled.h2`
@@ -75,22 +82,53 @@ const Textarea = styled.textarea`
 `;
 
 const Button = styled.button`
-  padding: 0.75rem 1.5rem;
-  background: #3b82f6;
+  padding: 1rem 2rem;
   color: white;
   border: none;
-  border-radius: 0.5rem;
-  font-weight: 500;
+  border-radius: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   
-  &:hover {
-    background: #2563eb;
+  &.correct {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    
+    &:hover {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  &.validate {
+    background: linear-gradient(135deg, #10b981, #059669);
+    
+    &:hover {
+      background: linear-gradient(135deg, #059669, #047857);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  &.format {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    
+    &:hover {
+      background: linear-gradient(135deg, #d97706, #b45309);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
+    }
   }
   
   &:disabled {
     background: #94a3b8;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
   }
 `;
 
@@ -360,24 +398,26 @@ function Addresses() {
           </FormGroup>
           
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <Button type="submit" disabled={correctAddressMutation.isLoading}>
+            <Button type="submit" className="correct" disabled={correctAddressMutation.isLoading}>
+              <Edit3 size={16} />
               {correctAddressMutation.isLoading ? 'Düzeltiliyor...' : 'Adresi Düzelt'}
             </Button>
             
             <Button 
               type="button"
+              className="validate"
               onClick={handleValidateAddress}
               disabled={validateAddressMutation.isLoading}
-              style={{ background: '#10b981' }}
             >
+              <CheckCircle size={16} />
               {validateAddressMutation.isLoading ? 'Doğrulanıyor...' : 'Adresi Doğrula'}
             </Button>
             
             <Button 
               type="button"
+              className="format"
               onClick={handleFormatAddress}
               disabled={formatAddressMutation.isLoading}
-              style={{ background: '#f59e0b' }}
             >
               {formatAddressMutation.isLoading ? 'Formatlanıyor...' : 'Adresi Formatla'}
             </Button>

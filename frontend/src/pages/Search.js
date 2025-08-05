@@ -29,10 +29,17 @@ const Subtitle = styled.p`
 
 const SearchSection = styled.div`
   background: white;
-  border-radius: 0.75rem;
-  padding: 2rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   margin-bottom: 2rem;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
 `;
 
 const SearchForm = styled.form`
@@ -41,18 +48,35 @@ const SearchForm = styled.form`
   margin-bottom: 1rem;
 `;
 
-const SearchInput = styled.input`
+const SearchInput = styled.div`
   flex: 1;
-  padding: 0.75rem 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+`;
+
+const SearchInputField = styled.input`
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 1rem;
   font-size: 1rem;
+  background: #f8fafc;
+  transition: all 0.3s ease;
   
   &:focus {
     outline: none;
     border-color: #3b82f6;
+    background: white;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
   }
+`;
+
+const SearchIconWrapper = styled.div`
+  position: absolute;
+  left: 1rem;
+  color: #64748b;
+  z-index: 1;
 `;
 
 const SearchButton = styled.button`
@@ -376,12 +400,17 @@ function Search() {
 
       <SearchSection>
         <SearchForm onSubmit={handleSearch}>
-          <SearchInput
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Örn: 500 TL altında siyah spor ayakkabı öner..."
-          />
+          <SearchInput>
+            <SearchIconWrapper>
+              <SearchIcon size={20} />
+            </SearchIconWrapper>
+            <SearchInputField
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Örn: 500 TL altında siyah spor ayakkabı öner..."
+            />
+          </SearchInput>
           <SearchButton type="submit" disabled={searchMutation.isLoading}>
             {searchMutation.isLoading ? (
               <>

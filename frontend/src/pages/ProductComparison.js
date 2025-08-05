@@ -41,16 +41,29 @@ const ProductSelector = styled.div`
 
 const ProductCard = styled.div`
   background: white;
-  border-radius: 1rem;
-  padding: 2rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  border: 2px solid ${props => props.selected ? '#10b981' : '#e2e8f0'};
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: 3px solid ${props => props.selected ? '#10b981' : '#e2e8f0'};
   transition: all 0.3s ease;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
 
   &:hover {
     border-color: #10b981;
-    transform: translateY(-2px);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: ${props => props.selected ? 'linear-gradient(90deg, #10b981, #059669)' : 'transparent'};
   }
 `;
 

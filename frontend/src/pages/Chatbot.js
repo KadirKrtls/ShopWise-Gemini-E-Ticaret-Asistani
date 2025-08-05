@@ -55,23 +55,34 @@ const Message = styled.div`
 `;
 
 const MessageBubble = styled.div`
-  padding: 1rem;
-  border-radius: 1rem;
+  padding: 1.25rem;
+  border-radius: 1.5rem;
   max-width: 100%;
   word-wrap: break-word;
   position: relative;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  
   ${props => props.isUser 
     ? `
-      background: #3b82f6;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
       color: white;
-      border-bottom-right-radius: 0.25rem;
+      border-bottom-right-radius: 0.5rem;
+      margin-left: auto;
+      max-width: 70%;
     ` 
     : `
-      background: #f1f5f9;
+      background: linear-gradient(135deg, #f8fafc, #f1f5f9);
       color: #1e293b;
-      border-bottom-left-radius: 0.25rem;
+      border-bottom-left-radius: 0.5rem;
       border-left: 4px solid #10b981;
+      max-width: 70%;
     `
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -79,15 +90,26 @@ const GeminiBadge = styled.div`
   position: absolute;
   top: -8px;
   left: 12px;
-  background: #10b981;
+  background: linear-gradient(135deg, #10b981, #059669);
   color: white;
-  padding: 2px 8px;
-  border-radius: 12px;
+  padding: 4px 12px;
+  border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  animation: pulse 2s infinite;
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
 `;
 
 const Avatar = styled.div`

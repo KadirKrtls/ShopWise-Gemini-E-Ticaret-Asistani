@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Bell, TrendingUp, TrendingDown, DollarSign, Package, AlertTriangle } from 'lucide-react';
+import { Bell, TrendingUp, TrendingDown, DollarSign, Package, AlertTriangle, Plus } from 'lucide-react';
 import { useMutation, useQuery } from 'react-query';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -41,14 +41,36 @@ const TrackingGrid = styled.div`
 
 const TrackingCard = styled.div`
   background: white;
-  border-radius: 1rem;
-  padding: 2rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  border-left: 4px solid ${props => {
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-left: 6px solid ${props => {
     if (props.priceChange > 0) return '#ef4444';
     if (props.priceChange < 0) return '#10b981';
     return '#6b7280';
   }};
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: ${props => {
+      if (props.priceChange > 0) return 'linear-gradient(90deg, #ef4444, #dc2626)';
+      if (props.priceChange < 0) return 'linear-gradient(90deg, #10b981, #059669)';
+      return 'linear-gradient(90deg, #6b7280, #4b5563)';
+    }};
+  }
 `;
 
 const ProductInfo = styled.div`
