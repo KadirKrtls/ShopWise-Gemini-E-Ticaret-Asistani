@@ -693,8 +693,8 @@ function Search() {
   };
 
   // AI-powered search mutation
-  const searchMutation = useMutation(
-    async (searchData) => {
+  const searchMutation = useMutation({
+    mutationFn: async (searchData) => {
       setIsAnalyzing(true);
       
       try {
@@ -740,23 +740,21 @@ function Search() {
         setIsAnalyzing(false);
       }
     },
-    {
-      onSuccess: (data) => {
-        setSearchResults(data.products || []);
-        setShowResults(true);
-        
-        // Add to search history
-        const newHistory = [searchQuery, ...searchHistory.filter(item => item !== searchQuery)].slice(0, 5);
-        setSearchHistory(newHistory);
-        
-        toast.success(`${data.total_results || 0} ürün bulundu! ${data.ai_analysis ? '🤖 AI analizi ile' : '📊 Standart arama ile'}`);
-      },
-      onError: (error) => {
-        toast.error('Arama yapılamadı. Lütfen tekrar deneyin.');
-        console.error('Arama hatası:', error);
-      }
+    onSuccess: (data) => {
+      setSearchResults(data.products || []);
+      setShowResults(true);
+      
+      // Add to search history
+      const newHistory = [searchQuery, ...searchHistory.filter(item => item !== searchQuery)].slice(0, 5);
+      setSearchHistory(newHistory);
+      
+      toast.success(`${data.total_results || 0} ürün bulundu! ${data.ai_analysis ? '🤖 AI analizi ile' : '📊 Standart arama ile'}`);
+    },
+    onError: (error) => {
+      toast.error('Arama yapılamadı. Lütfen tekrar deneyin.');
+      console.error('Arama hatası:', error);
     }
-  ), []); // eslint-disable-line react-hooks/exhaustive-deps
+  });
 
   // Generate mock products
   const generateMockProducts = (query) => {

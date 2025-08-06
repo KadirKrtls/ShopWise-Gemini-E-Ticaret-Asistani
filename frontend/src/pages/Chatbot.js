@@ -337,6 +337,7 @@ const SendButton = styled.button`
 
 // Removed unused SuggestionsGrid
 
+const WelcomeContainer = styled.div`
   text-align: center;
   padding: 3rem 2rem;
   background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
