@@ -38,24 +38,6 @@ Doğal dil ile arama yapın, AI analiz sonuçları alın.
 
 ---
 
-### 📊 Ürün Karşılaştırma - AI Destekli Analiz
-İki ürünü karşılaştırın, AI destekli analiz sonuçları alın.
-
-![Ürün Karşılaştırma](docs/images/product-comparison.png)
-
-*Karşılaştırma özellikleri: AI analizi, detaylı karşılaştırma, karar desteği*
-
----
-
-### 📈 Fiyat Takibi - Gerçek Zamanlı İzleme
-Ürün fiyatlarını takip edin, alarm kurun.
-
-![Fiyat Takibi](docs/images/price-tracking.png)
-
-*Fiyat takibi özellikleri: Gerçek zamanlı takip, alarm sistemi, fiyat geçmişi*
-
----
-
 ### 🛍️ Ürün Detayı - Tam Özellikli Sayfa
 Detaylı ürün bilgileri, sepete ekleme, favorilere ekleme.
 
@@ -80,6 +62,24 @@ Beğendiğiniz ürünleri favorilere ekleyin, kolayca yönetin.
 ![Favoriler](docs/images/favorites-page.png)
 
 *Favoriler özellikleri: Kolay yönetim, hızlı erişim, sepete ekleme*
+
+---
+
+### 📊 Ürün Karşılaştırma - AI Destekli Analiz
+İki ürünü karşılaştırın, AI destekli analiz sonuçları alın.
+
+![Ürün Karşılaştırma](docs/images/product-comparison.png)
+
+*Karşılaştırma özellikleri: AI analizi, detaylı karşılaştırma, karar desteği*
+
+---
+
+### 📈 Fiyat Takibi - Gerçek Zamanlı İzleme
+Ürün fiyatlarını takip edin, alarm kurun.
+
+![Fiyat Takibi](docs/images/price-tracking.png)
+
+*Fiyat takibi özellikleri: Gerçek zamanlı takip, alarm sistemi, fiyat geçmişi*
 
 ---
 
