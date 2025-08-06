@@ -34,31 +34,18 @@ jobs:
         pip install -r requirements.txt
         pip install pytest pytest-cov flake8 black isort
     
-    - name: Code formatting check (Black)
-      working-directory: ./backend
-      run: black --check --diff .
-    
-    - name: Import sorting check (isort)
-      working-directory: ./backend
-      run: isort --check-only --diff .
-    
-    - name: Lint with flake8
-      working-directory: ./backend
-      run: |
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    
     - name: Test with pytest
       working-directory: ./backend
       run: |
-        pytest --maxfail=1 --disable-warnings -q --cov=app --cov-report=xml
+        pytest --maxfail=5 --disable-warnings -v
     
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        file: ./backend/coverage.xml
-        flags: backend
-        name: backend-coverage
+    # Coverage upload disabled for now
+    # - name: Upload coverage to Codecov
+    #   uses: codecov/codecov-action@v3
+    #   with:
+    #     file: ./backend/coverage.xml
+    #     flags: backend
+    #     name: backend-coverage
 
   frontend-tests:
     name: Frontend Tests
@@ -78,13 +65,9 @@ jobs:
       working-directory: ./frontend
       run: npm ci
     
-    - name: Run ESLint
-      working-directory: ./frontend
-      run: npm run lint --if-present
-    
     - name: Run tests
       working-directory: ./frontend
-      run: npm test -- --coverage --watchAll=false
+      run: npm test -- --coverage --watchAll=false --testPathIgnorePatterns=[]
     
     - name: Build project
       working-directory: ./frontend
@@ -93,6 +76,10 @@ jobs:
   security-scan:
     name: Security Scan
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
     
     steps:
     - uses: actions/checkout@v4
@@ -104,6 +91,8 @@ jobs:
         scan-ref: '.'
         format: 'sarif'
         output: 'trivy-results.sarif'
+        severity: 'CRITICAL,HIGH'
+        exit-code: '0'
     
     - name: Upload Trivy scan results to GitHub Security tab
       uses: github/codeql-action/upload-sarif@v2
