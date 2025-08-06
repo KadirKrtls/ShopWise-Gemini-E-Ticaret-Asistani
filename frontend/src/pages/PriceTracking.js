@@ -319,7 +319,33 @@ function PriceTracking() {
   useEffect(() => {
     const savedProducts = localStorage.getItem('trackedProducts');
     if (savedProducts) {
-      setTrackedProducts(JSON.parse(savedProducts));
+      const parsedProducts = JSON.parse(savedProducts);
+      // Eski veriler image alanı olmayabilir, kontrol et ve güncelle
+      const updatedProducts = parsedProducts.map(product => {
+        if (!product.image) {
+          // Ürün tipine göre varsayılan resim ekle
+          const defaultImages = {
+            'iPhone': 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=300&fit=crop&crop=center',
+            'MacBook': 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop&crop=center',
+            'AirPods': 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop&crop=center',
+            'Samsung': 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=400&h=300&fit=crop&crop=center'
+          };
+          
+          const productType = Object.keys(defaultImages).find(type => 
+            product.name.toLowerCase().includes(type.toLowerCase())
+          );
+          
+          return {
+            ...product,
+            image: productType ? defaultImages[productType] : 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop&crop=center'
+          };
+        }
+        return product;
+      });
+      
+      setTrackedProducts(updatedProducts);
+      // Güncellenmiş veriyi kaydet
+      localStorage.setItem('trackedProducts', JSON.stringify(updatedProducts));
     } else {
       // İlk kullanımda mock data'yı kaydet
       setTrackedProducts(mockTrackedProducts);
@@ -423,8 +449,28 @@ function PriceTracking() {
   };
 
   const handleAddTracking = () => {
-    toast.success('Yeni ürün takibi özelliği yakında aktif olacak!');
-    // Gerçek uygulamada ürün arama modalı açılır
+    // Demo için yeni ürün ekleyelim
+    const newProduct = {
+      id: Date.now(),
+      name: "Samsung Galaxy S24",
+      category: "Telefon",
+      currentPrice: 42999,
+      previousPrice: 44999,
+      priceChange: -2000,
+      priceHistory: [
+        { date: "2024-01-15", price: 44999 },
+        { date: "2024-01-10", price: 45999 },
+        { date: "2024-01-05", price: 46999 }
+      ],
+      alertEnabled: true,
+      alertThreshold: 40000,
+      image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=400&h=300&fit=crop&crop=center"
+    };
+    
+    const updatedProducts = [...trackedProducts, newProduct];
+    setTrackedProducts(updatedProducts);
+    localStorage.setItem('trackedProducts', JSON.stringify(updatedProducts));
+    toast.success(`${newProduct.name} fiyat takibine eklendi!`);
   };
 
   return (
@@ -442,7 +488,23 @@ function PriceTracking() {
           <TrackingCard key={product.id} priceChange={product.priceChange}>
             <ProductInfo>
                               <ProductImage>
-                  <img src={product.image} alt={product.name} />
+                  {product.image ? (
+                    <img src={product.image} alt={product.name} />
+                  ) : (
+                    <div style={{ 
+                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      width: '100%',
+                      height: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'white',
+                      fontSize: '1.5rem',
+                      fontWeight: 'bold'
+                    }}>
+                      {product.name.charAt(0)}
+                    </div>
+                  )}
                 </ProductImage>
               <ProductDetails>
                 <ProductName>{product.name}</ProductName>
@@ -509,10 +571,21 @@ function PriceTracking() {
         ))}
       </TrackingGrid>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={{ textAlign: 'center', display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
         <AddTrackingButton onClick={handleAddTracking}>
           <Plus size={20} />
           Yeni Ürün Takip Et
+        </AddTrackingButton>
+        <AddTrackingButton 
+          onClick={() => {
+            localStorage.removeItem('trackedProducts');
+            setTrackedProducts(mockTrackedProducts);
+            localStorage.setItem('trackedProducts', JSON.stringify(mockTrackedProducts));
+            toast.success('Veriler sıfırlandı, yeni resimler yüklendi!');
+          }}
+          style={{ background: '#ef4444' }}
+        >
+          Verileri Sıfırla
         </AddTrackingButton>
       </div>
     </TrackingContainer>

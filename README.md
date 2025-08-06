@@ -1,6 +1,54 @@
 # 🚀 ShopWise - Gemini Destekli Akıllı E-Ticaret Platformu
 
+[![CI/CD Pipeline](https://github.com/KadirKrtls/ShopWise-Gemini-E-Ticaret-Asistani/actions/workflows/ci.yml/badge.svg)](https://github.com/KadirKrtls/ShopWise-Gemini-E-Ticaret-Asistani/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![React 18](https://img.shields.io/badge/react-18+-blue.svg)](https://reactjs.org/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Security Policy](https://img.shields.io/badge/security-policy-blue)](SECURITY.md)
+
 ShopWise, müşteriler ve satıcılar için AI destekli akıllı e-ticaret platformudur. Gemini AI teknolojisi ile güçlendirilmiş chatbot, ürün önerileri ve satıcı araçları sunar.
+
+## 🏗️ Sistem Mimarisi
+
+```mermaid
+graph TB
+    subgraph "Frontend"
+        A[React App]
+        B[Styled Components]
+        C[React Query]
+    end
+    
+    subgraph "Backend"
+        D[FastAPI]
+        E[SQLAlchemy]
+        F[JWT Auth]
+    end
+    
+    subgraph "AI Services"
+        G[Google Gemini]
+        H[Natural Language Processing]
+        I[Product Analysis]
+    end
+    
+    subgraph "Database"
+        J[SQLite]
+        K[User Data]
+        L[Product Data]
+    end
+    
+    A --> D
+    D --> E
+    E --> J
+    D --> G
+    G --> H
+    G --> I
+    
+    style A fill:#61dafb
+    style D fill:#009688
+    style G fill:#4285f4
+    style J fill:#003b57
+```
 
 ## ✨ Özellikler
 
