@@ -9,6 +9,89 @@
 
 ShopWise, müşteriler ve satıcılar için AI destekli akıllı e-ticaret platformudur. Gemini AI teknolojisi ile güçlendirilmiş chatbot, ürün önerileri ve satıcı araçları sunar.
 
+## 📸 Uygulama Ekran Görüntüleri
+
+### 🏠 Ana Sayfa - Modern Dashboard
+Modern ve kullanıcı dostu dashboard tasarımı ile hızlı erişim imkanı.
+
+![Ana Sayfa](docs/images/homepage-dashboard.png)
+
+*Ana sayfa özellikler: Quick Actions, gerçek zamanlı metrikler, responsive tasarım*
+
+---
+
+### 🤖 AI Chatbot - Gemini Destekli Asistan
+Doğal dil işleme ve akıllı ürün önerileri sunan AI asistanı.
+
+![AI Chatbot](docs/images/chatbot-ai-assistant.png)
+
+*AI Chatbot özellikleri: Doğal sohbet, ürün önerileri, gerçek zamanlı yanıtlar*
+
+---
+
+### 🔍 Akıllı Arama - Doğal Dil Arama
+Doğal dil ile arama yapın, AI analiz sonuçları alın.
+
+![Akıllı Arama](docs/images/smart-search.png)
+
+*Arama özellikleri: Doğal dil işleme, AI analizi, autocomplete*
+
+---
+
+### 📊 Ürün Karşılaştırma - AI Destekli Analiz
+İki ürünü karşılaştırın, AI destekli analiz sonuçları alın.
+
+![Ürün Karşılaştırma](docs/images/product-comparison.png)
+
+*Karşılaştırma özellikleri: AI analizi, detaylı karşılaştırma, karar desteği*
+
+---
+
+### 📈 Fiyat Takibi - Gerçek Zamanlı İzleme
+Ürün fiyatlarını takip edin, alarm kurun.
+
+![Fiyat Takibi](docs/images/price-tracking.png)
+
+*Fiyat takibi özellikleri: Gerçek zamanlı takip, alarm sistemi, fiyat geçmişi*
+
+---
+
+### 🛍️ Ürün Detayı - Tam Özellikli Sayfa
+Detaylı ürün bilgileri, sepete ekleme, favorilere ekleme.
+
+![Ürün Detayı](docs/images/product-detail.png)
+
+*Ürün detayı özellikleri: Galeri, özellikler, sepete ekleme, favoriler*
+
+---
+
+### 🛒 Alışveriş Sepeti - Tam E-Ticaret Deneyimi
+KDV hesaplama, kargo hesaplama, ödeme akışı.
+
+![Alışveriş Sepeti](docs/images/shopping-cart.png)
+
+*Sepet özellikleri: KDV hesaplama, kargo ücreti, miktar kontrolü*
+
+---
+
+### ❤️ Favoriler - Kişisel Koleksiyon
+Beğendiğiniz ürünleri favorilere ekleyin, kolayca yönetin.
+
+![Favoriler](docs/images/favorites-page.png)
+
+*Favoriler özellikleri: Kolay yönetim, hızlı erişim, sepete ekleme*
+
+---
+
+### 🏪 Satıcı Paneli - AI Destekli Araçlar
+Satıcılar için AI destekli ürün yönetimi ve analiz araçları.
+
+![Satıcı Paneli](docs/images/seller-dashboard.png)
+
+*Satıcı araçları: AI ürün açıklaması, stok tahmini, satış analizi*
+
+---
+
 ## 🏗️ Sistem Mimarisi
 
 ```mermaid
@@ -252,6 +335,48 @@ npm run build
 ## 📄 Lisans
 
 MIT License - Detaylar için LICENSE dosyasına bakın.
+
+---
+
+## 📊 Özellik Karşılaştırma Tablosu
+
+| Özellik | Müşteri | Satıcı | Admin |
+|---------|---------|--------|-------|
+| 🤖 AI Chatbot | ✅ | ✅ | ✅ |
+| 🔍 Akıllı Arama | ✅ | ✅ | ✅ |
+| 🛒 Sepet & Ödeme | ✅ | ❌ | ✅ |
+| ❤️ Favoriler | ✅ | ❌ | ✅ |
+| 📈 Fiyat Takibi | ✅ | ❌ | ✅ |
+| 📊 Ürün Karşılaştırma | ✅ | ✅ | ✅ |
+| 🏪 Ürün Yönetimi | ❌ | ✅ | ✅ |
+| 🤖 AI Ürün Açıklaması | ❌ | ✅ | ✅ |
+| 📊 Stok Tahmini | ❌ | ✅ | ✅ |
+| 📈 Satış Analizi | ❌ | ✅ | ✅ |
+| 💬 Yorum Yönetimi | ✅ | ✅ | ✅ |
+| 🏠 Adres Yönetimi | ✅ | ✅ | ✅ |
+
+## 🎯 Demo Sayfaları
+
+ShopWise toplamda **11 tam özellikli sayfa** içermektedir:
+
+### 🌟 Ana Özellikler
+1. **[Ana Sayfa](http://localhost:3000)** - Modern dashboard ve quick actions
+2. **[AI Chatbot](http://localhost:3000/chatbot)** - Gemini destekli AI asistan
+3. **[Akıllı Arama](http://localhost:3000/search)** - Doğal dil ile arama
+
+### 🛒 E-Ticaret Akışı
+4. **[Ürün Detayı](http://localhost:3000/products/1)** - Tam özellikli ürün sayfası
+5. **[Alışveriş Sepeti](http://localhost:3000/cart)** - KDV ve kargo hesaplama
+6. **[Favoriler](http://localhost:3000/favorites)** - Kişisel ürün koleksiyonu
+
+### 📊 Gelişmiş Özellikler
+7. **[Ürün Karşılaştırma](http://localhost:3000/comparison)** - AI destekli analiz
+8. **[Fiyat Takibi](http://localhost:3000/price-tracking)** - Gerçek zamanlı izleme
+
+### 🏪 Yönetim Panelleri
+9. **[Ürünler](http://localhost:3000/products)** - Satıcı paneli ve AI araçları
+10. **[Yorumlar](http://localhost:3000/reviews)** - Yorum yönetim sistemi
+11. **[Adresler](http://localhost:3000/addresses)** - Adres yönetimi
 
 ---
 

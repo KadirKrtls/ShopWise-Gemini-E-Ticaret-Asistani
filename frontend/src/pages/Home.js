@@ -490,8 +490,9 @@ function Home() {
     return isAuthenticated ? 'Hoş geldiniz! AI asistanınız hazır.' : 'Giriş yaparak tüm özelliklerden yararlanın.';
   };
   
-  // Mesajı göster
+  // Mesajı göster (kullanılacak)
   const welcomeMessage = getWelcomeMessage();
+  console.log('Welcome message:', welcomeMessage); // Demo için log
 
   // Ana CTA
   const handlePrimaryCTA = () => {

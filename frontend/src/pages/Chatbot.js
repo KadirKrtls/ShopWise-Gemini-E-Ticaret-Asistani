@@ -337,37 +337,6 @@ const SendButton = styled.button`
 
 // Removed unused SuggestionsGrid
 
-const SuggestionButton = styled.button`
-  padding: 0.75rem 1rem;
-  background: white;
-  border: 2px solid #e2e8f0;
-  border-radius: 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #374151;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: left;
-  
-  &:hover {
-    border-color: #3b82f6;
-    background: #f0f9ff;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
-  
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-`;
-
-// Welcome Message
-const WelcomeMessage = styled.div`
   text-align: center;
   padding: 3rem 2rem;
   background: linear-gradient(135deg, #f0f9ff, #e0f2fe);

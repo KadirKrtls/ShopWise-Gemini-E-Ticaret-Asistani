@@ -643,8 +643,9 @@ function Search() {
     return isAuthenticated;
   };
   
-  // Gelişmiş özellikler durumu
+  // Gelişmiş özellikler durumu (kullanılacak)
   const hasAdvancedAccess = canUseAdvancedFeatures();
+  console.log('Advanced access:', hasAdvancedAccess); // Demo için log
 
   // Debounced search for autocomplete
   const debouncedSearch = useCallback(
@@ -755,7 +756,7 @@ function Search() {
         console.error('Arama hatası:', error);
       }
     }
-  );
+  ), []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Generate mock products
   const generateMockProducts = (query) => {
