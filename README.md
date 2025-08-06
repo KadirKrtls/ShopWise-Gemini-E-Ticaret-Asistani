@@ -14,7 +14,7 @@ ShopWise, müşteriler ve satıcılar için AI destekli akıllı e-ticaret platf
 ### 🏠 Ana Sayfa - Modern Dashboard
 Modern ve kullanıcı dostu dashboard tasarımı ile hızlı erişim imkanı.
 
-![Ana Sayfa](docs/images/homepage-dashboard.png)
+![Ana Sayfa](docs/images/Ana_Sayfa1.png)
 
 *Ana sayfa özellikler: Quick Actions, gerçek zamanlı metrikler, responsive tasarım*
 
@@ -23,7 +23,7 @@ Modern ve kullanıcı dostu dashboard tasarımı ile hızlı erişim imkanı.
 ### 🏪 Ana Sayfa Devamı - Satıcı Paneli
 Ana sayfa üzerinden erişilebilen satıcı araçları ve AI destekli özellikler.
 
-![Ana Sayfa Devamı](docs/images/seller-dashboard.png)
+![Ana Sayfa Devamı](docs/images/Ann sayfa-2.png)
 
 *Satıcı araçları: AI ürün açıklaması, stok tahmini, satış analizi*
 
@@ -32,7 +32,7 @@ Ana sayfa üzerinden erişilebilen satıcı araçları ve AI destekli özellikle
 ### ❤️ Favoriler - Kişisel Koleksiyon
 Beğendiğiniz ürünleri favorilere ekleyin, kolayca yönetin.
 
-![Favoriler](docs/images/favorites-page.png)
+![Favoriler](docs/images/Favoriler.png)
 
 *Favoriler özellikleri: Kolay yönetim, hızlı erişim, sepete ekleme*
 
@@ -41,7 +41,7 @@ Beğendiğiniz ürünleri favorilere ekleyin, kolayca yönetin.
 ### 🛒 Alışveriş Sepeti - Tam E-Ticaret Deneyimi
 KDV hesaplama, kargo hesaplama, ödeme akışı.
 
-![Alışveriş Sepeti](docs/images/shopping-cart.png)
+![Alışveriş Sepeti](docs/images/sepet.png)
 
 *Sepet özellikleri: KDV hesaplama, kargo ücreti, miktar kontrolü*
 
@@ -50,7 +50,7 @@ KDV hesaplama, kargo hesaplama, ödeme akışı.
 ### 🔍 Akıllı Arama - Doğal Dil Arama
 Doğal dil ile arama yapın, AI analiz sonuçları alın.
 
-![Akıllı Arama](docs/images/smart-search.png)
+![Akıllı Arama](docs/images/Akıllı Arama.png)
 
 *Arama özellikleri: Doğal dil işleme, AI analizi, autocomplete*
 
@@ -59,7 +59,7 @@ Doğal dil ile arama yapın, AI analiz sonuçları alın.
 ### 🛍️ Ana Sayfa Devamı - Ürün Detayı
 Ana sayfadan erişilebilen detaylı ürün bilgileri ve özellikler.
 
-![Ana Sayfa Devamı](docs/images/product-detail.png)
+![Ana Sayfa Devamı](docs/images/Ann sayfa-2.png)
 
 *Ürün detayı özellikleri: Galeri, özellikler, sepete ekleme, favoriler*
 
@@ -68,7 +68,7 @@ Ana sayfadan erişilebilen detaylı ürün bilgileri ve özellikler.
 ### 📈 Fiyat Takibi - Gerçek Zamanlı İzleme
 Ürün fiyatlarını takip edin, alarm kurun.
 
-![Fiyat Takibi](docs/images/price-tracking.png)
+![Fiyat Takibi](docs/images/Fiyat_takibi.png)
 
 *Fiyat takibi özellikleri: Gerçek zamanlı takip, alarm sistemi, fiyat geçmişi*
 
@@ -77,7 +77,7 @@ Ana sayfadan erişilebilen detaylı ürün bilgileri ve özellikler.
 ### 🤖 AI Chatbot - Gemini Destekli Asistan
 Doğal dil işleme ve akıllı ürün önerileri sunan AI asistanı.
 
-![AI Chatbot](docs/images/chatbot-ai-assistant.png)
+![AI Chatbot](docs/images/chatbot.png)
 
 *AI Chatbot özellikleri: Doğal sohbet, ürün önerileri, gerçek zamanlı yanıtlar*
 
