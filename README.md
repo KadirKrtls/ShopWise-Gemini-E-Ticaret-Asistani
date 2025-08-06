@@ -20,39 +20,12 @@ Modern ve kullanıcı dostu dashboard tasarımı ile hızlı erişim imkanı.
 
 ---
 
-### 🤖 AI Chatbot - Gemini Destekli Asistan
-Doğal dil işleme ve akıllı ürün önerileri sunan AI asistanı.
+### 🏪 Ana Sayfa Devamı - Satıcı Paneli
+Ana sayfa üzerinden erişilebilen satıcı araçları ve AI destekli özellikler.
 
-![AI Chatbot](docs/images/chatbot-ai-assistant.png)
+![Ana Sayfa Devamı](docs/images/seller-dashboard.png)
 
-*AI Chatbot özellikleri: Doğal sohbet, ürün önerileri, gerçek zamanlı yanıtlar*
-
----
-
-### 🔍 Akıllı Arama - Doğal Dil Arama
-Doğal dil ile arama yapın, AI analiz sonuçları alın.
-
-![Akıllı Arama](docs/images/smart-search.png)
-
-*Arama özellikleri: Doğal dil işleme, AI analizi, autocomplete*
-
----
-
-### 🛍️ Ürün Detayı - Tam Özellikli Sayfa
-Detaylı ürün bilgileri, sepete ekleme, favorilere ekleme.
-
-![Ürün Detayı](docs/images/product-detail.png)
-
-*Ürün detayı özellikleri: Galeri, özellikler, sepete ekleme, favoriler*
-
----
-
-### 🛒 Alışveriş Sepeti - Tam E-Ticaret Deneyimi
-KDV hesaplama, kargo hesaplama, ödeme akışı.
-
-![Alışveriş Sepeti](docs/images/shopping-cart.png)
-
-*Sepet özellikleri: KDV hesaplama, kargo ücreti, miktar kontrolü*
+*Satıcı araçları: AI ürün açıklaması, stok tahmini, satış analizi*
 
 ---
 
@@ -65,12 +38,30 @@ Beğendiğiniz ürünleri favorilere ekleyin, kolayca yönetin.
 
 ---
 
-### 📊 Ürün Karşılaştırma - AI Destekli Analiz
-İki ürünü karşılaştırın, AI destekli analiz sonuçları alın.
+### 🛒 Alışveriş Sepeti - Tam E-Ticaret Deneyimi
+KDV hesaplama, kargo hesaplama, ödeme akışı.
 
-![Ürün Karşılaştırma](docs/images/product-comparison.png)
+![Alışveriş Sepeti](docs/images/shopping-cart.png)
 
-*Karşılaştırma özellikleri: AI analizi, detaylı karşılaştırma, karar desteği*
+*Sepet özellikleri: KDV hesaplama, kargo ücreti, miktar kontrolü*
+
+---
+
+### 🔍 Akıllı Arama - Doğal Dil Arama
+Doğal dil ile arama yapın, AI analiz sonuçları alın.
+
+![Akıllı Arama](docs/images/smart-search.png)
+
+*Arama özellikleri: Doğal dil işleme, AI analizi, autocomplete*
+
+---
+
+### 🛍️ Ana Sayfa Devamı - Ürün Detayı
+Ana sayfadan erişilebilen detaylı ürün bilgileri ve özellikler.
+
+![Ana Sayfa Devamı](docs/images/product-detail.png)
+
+*Ürün detayı özellikleri: Galeri, özellikler, sepete ekleme, favoriler*
 
 ---
 
@@ -83,12 +74,12 @@ Beğendiğiniz ürünleri favorilere ekleyin, kolayca yönetin.
 
 ---
 
-### 🏪 Satıcı Paneli - AI Destekli Araçlar
-Satıcılar için AI destekli ürün yönetimi ve analiz araçları.
+### 🤖 AI Chatbot - Gemini Destekli Asistan
+Doğal dil işleme ve akıllı ürün önerileri sunan AI asistanı.
 
-![Satıcı Paneli](docs/images/seller-dashboard.png)
+![AI Chatbot](docs/images/chatbot-ai-assistant.png)
 
-*Satıcı araçları: AI ürün açıklaması, stok tahmini, satış analizi*
+*AI Chatbot özellikleri: Doğal sohbet, ürün önerileri, gerçek zamanlı yanıtlar*
 
 ---
 
