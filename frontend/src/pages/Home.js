@@ -7,758 +7,788 @@ import {
   Zap,
   Brain,
   Sparkles,
-  Activity,
-  ShoppingCart
+  ShoppingCart,
+  MessageCircle,
+  Search,
+  ArrowRight,
+  CheckCircle,
+  Star,
+  Shield,
+  ExternalLink,
+  Play,
+  Clock
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import ProductCard from '../components/ProductCard';
 import toast from 'react-hot-toast';
 
-const HomeContainer = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
+// Animasyonlar
+const fadeIn = keyframes`
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 `;
 
-const Hero = styled.div`
-  text-align: center;
-  margin-bottom: 4rem;
-  position: relative;
-`;
-
-const Title = styled.h1`
-  font-size: 3.5rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #1e293b, #3b82f6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-`;
-
-const Subtitle = styled.p`
-  font-size: 1.25rem;
-  color: #64748b;
-  margin-bottom: 2rem;
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
-  line-height: 1.6;
+const slideIn = keyframes`
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
 `;
 
 const pulse = keyframes`
-  0%, 100% { 
-    opacity: 1; 
-    transform: scale(1);
-  }
-  50% { 
-    opacity: 0.9; 
-    transform: scale(1.05);
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+`;
+
+const bounce = keyframes`
+  0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
+  40%, 43% { transform: translate3d(0, -8px, 0); }
+  70% { transform: translate3d(0, -4px, 0); }
+  90% { transform: translate3d(0, -2px, 0); }
+`;
+
+// Ana Container
+const HomeContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+  animation: ${css`${fadeIn} 0.8s ease-out`};
+`;
+
+// Hero Bölümü - Daha Kompakt
+const Hero = styled.div`
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-xl) 0;
+`;
+
+const Logo = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+`;
+
+const LogoIcon = styled.div`
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  font-size: 28px;
+  box-shadow: var(--shadow-md);
+`;
+
+const Title = styled.h1`
+  font-size: 48px;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary-blue) 50%, var(--primary-orange) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+  line-height: 1.1;
+  
+  @media (max-width: 768px) {
+    font-size: 36px;
   }
 `;
 
-const brainFloat = keyframes`
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
+const Subtitle = styled.p`
+  font-size: 20px;
+  color: var(--text-secondary);
+  margin: var(--spacing-md) 0 var(--spacing-xl);
+  font-weight: 500;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.4;
 `;
 
-const SystemStatus = styled.div`
+// CTA - Sadece Ana Buton
+const CTASection = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--spacing-xl);
+  animation: ${css`${slideIn} 0.6s ease-out 0.3s both`};
+`;
+
+const PrimaryCTA = styled.button`
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 2rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-  animation: ${css`${pulse} 2s infinite`};
-`;
-
-const StatsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-  margin-bottom: 4rem;
-`;
-
-const StatCard = styled.div`
-  background: white;
-  border-radius: 1.5rem;
-  padding: 2rem;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  border: 1px solid #e2e8f0;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-weight: 700;
+  font-size: 18px;
+  cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    animation: ${css`${bounce} 1s`};
+  }
+  
+  &:active {
+    transform: translateY(-2px);
+  }
+`;
+
+// Hızlı Aksiyonlar
+const QuickActions = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-lg);
+  margin: var(--spacing-xl) 0;
+  animation: ${css`${slideIn} 0.6s ease-out 0.4s both`};
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+`;
+
+const QuickActionCard = styled.div`
+  background: var(--white);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--light-gray);
+  transition: all 0.3s ease;
+  cursor: pointer;
   position: relative;
   overflow: hidden;
-  cursor: pointer;
-
-  &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  }
-
+  
   &::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #3b82f6, #10b981);
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-blue), var(--primary-orange));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-blue);
+    
+    &::before {
+      transform: scaleX(1);
+    }
+  }
+  
+  &:active {
+    transform: translateY(-2px);
   }
 `;
 
-const StatHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
-`;
-
-const StatIcon = styled.div`
-  width: 3rem;
-  height: 3rem;
-  border-radius: 1rem;
+const QuickActionIcon = styled.div`
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  color: white;
-  background: ${props => props.color || '#3b82f6'};
+  margin: 0 auto var(--spacing-lg);
+  color: var(--white);
+  font-size: 28px;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+  
+  ${QuickActionCard}:hover & {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-lg);
+  }
 `;
 
-const StatValue = styled.div`
-  font-size: 2.5rem;
+const QuickActionTitle = styled.h3`
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+`;
+
+const QuickActionDesc = styled.p`
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+`;
+
+// Metrikler - Kompakt
+const MetricsSection = styled.div`
+  margin: var(--spacing-xl) 0;
+  animation: ${css`${slideIn} 0.6s ease-out 0.6s both`};
+`;
+
+const MetricsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-lg);
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+`;
+
+const MetricCard = styled.div`
+  background: var(--white);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--light-gray);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-blue);
+    
+    &::before {
+      transform: scaleX(1);
+    }
+  }
+`;
+
+const MetricIcon = styled.div`
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--spacing-md);
+  color: var(--white);
+  font-size: 20px;
+`;
+
+const MetricValue = styled.div`
+  font-size: 32px;
   font-weight: 800;
-  color: #1e293b;
-  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
 `;
 
-const StatLabel = styled.div`
-  font-size: 1rem;
-  color: #64748b;
+const MetricLabel = styled.div`
+  font-size: 14px;
+  color: var(--text-secondary);
   font-weight: 500;
 `;
 
-const StatChange = styled.div`
-  font-size: 0.875rem;
-  color: ${props => props.positive ? '#10b981' : '#ef4444'};
-  font-weight: 600;
+// Ürünler Bölümü - Daha Görünür
+const ProductsSection = styled.div`
+  margin: var(--spacing-xl) 0;
+  animation: ${css`${slideIn} 0.6s ease-out 0.9s both`};
+`;
+
+const SectionHeader = styled.div`
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.25rem;
-`;
-
-const FeaturesGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
-  margin-bottom: 4rem;
-`;
-
-const FeatureCard = styled.div`
-  background: white;
-  border-radius: 1.5rem;
-  padding: 2.5rem;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  border: 1px solid #e2e8f0;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-
-  &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  }
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: ${props => props.gradient || 'linear-gradient(90deg, #3b82f6, #10b981)'};
-  }
-`;
-
-const FeatureHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-`;
-
-const FeatureIcon = styled.div`
-  width: 4rem;
-  height: 4rem;
-  border-radius: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  color: white;
-  background: ${props => props.color || '#3b82f6'};
-  position: relative;
-  
-  ${props => props.animated && css`
-    animation: ${brainFloat} 3s ease-in-out infinite;
-  `}
-`;
-
-const FeatureTitle = styled.h3`
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 0.5rem;
-`;
-
-const FeatureDescription = styled.p`
-  color: #64748b;
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-`;
-
-const FeatureBadge = styled.div`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 2rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  animation: ${css`${pulse} 2s infinite`};
-`;
-
-const ActionButton = styled.button`
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
-  }
-`;
-
-const GeminiHighlight = styled.div`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 2rem;
-  padding: 3rem;
-  color: white;
-  text-align: center;
-  margin-bottom: 3rem;
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-    animation: ${css`${pulse} 4s ease-in-out infinite`};
-  }
-`;
-
-const GeminiTitle = styled.h2`
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-`;
-
-const GeminiDescription = styled.p`
-  font-size: 1.125rem;
-  opacity: 0.9;
-  margin-bottom: 2rem;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-`;
-
-const GeminiStats = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
-`;
-
-const GeminiStat = styled.div`
-  text-align: center;
-`;
-
-const GeminiStatValue = styled.div`
-  font-size: 2rem;
-  font-weight: 800;
-  margin-bottom: 0.5rem;
-`;
-
-const GeminiStatLabel = styled.div`
-  font-size: 0.875rem;
-  opacity: 0.8;
-`;
-
-const FeaturedSection = styled.div`
-  margin: 4rem 0;
+  margin-bottom: var(--spacing-lg);
 `;
 
 const SectionTitle = styled.h2`
-  font-size: 2rem;
+  font-size: 28px;
   font-weight: 700;
-  text-align: center;
-  margin-bottom: 2rem;
-  color: #1e293b;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+`;
+
+const ViewAllButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: transparent;
+  border: 1px solid var(--primary-blue);
+  color: var(--primary-blue);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: var(--primary-blue);
+    color: var(--white);
+    transform: translateY(-1px);
+  }
 `;
 
 const ProductsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
-const ViewAllButton = styled.button`
-  display: block;
-  margin: 0 auto;
-  padding: 0.75rem 2rem;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  color: white;
-  border: none;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  cursor: pointer;
+// Özellikler Bölümü - Temiz
+const FeaturesSection = styled.div`
+  background: var(--light-gray);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl) var(--spacing-lg);
+  margin: var(--spacing-xl) 0;
+  animation: ${css`${slideIn} 0.6s ease-out 1.2s both`};
+`;
+
+const FeaturesTitle = styled.h2`
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+`;
+
+const FeaturesGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-lg);
+`;
+
+const FeatureCard = styled.div`
+  background: var(--white);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-md);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--medium-gray);
   transition: all 0.3s ease;
+  cursor: pointer;
   
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-md);
+  }
+`;
+
+const FeatureIcon = styled.div`
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--spacing-lg);
+  color: var(--white);
+  font-size: 24px;
+`;
+
+const FeatureTitle = styled.h3`
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+`;
+
+const FeatureDescription = styled.p`
+  color: var(--text-secondary);
+  line-height: 1.5;
+  font-size: 14px;
+`;
+
+// Status Badge - En altta
+const StatusBadge = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: linear-gradient(135deg, var(--success), var(--secondary-green));
+  color: var(--white);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: var(--spacing-lg);
+  
+  &::before {
+    content: '●';
+    animation: ${css`${pulse} 2s infinite`};
+  }
+`;
+
+// Loading Skeleton
+const SkeletonCard = styled.div`
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--medium-gray);
+  animation: ${css`${pulse} 1.5s infinite`};
+`;
+
+const SkeletonImage = styled.div`
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(90deg, var(--light-gray) 25%, var(--medium-gray) 50%, var(--light-gray) 75%);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--spacing-md);
+`;
+
+const SkeletonText = styled.div`
+  height: 16px;
+  background: linear-gradient(90deg, var(--light-gray) 25%, var(--medium-gray) 50%, var(--light-gray) 75%);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--spacing-sm);
+  
+  &:last-child {
+    width: 60%;
   }
 `;
 
 function Home() {
-  const navigate = useNavigate();
-  const [stats, setStats] = useState({
-    users: 0,
-    products: 0,
-    transactions: 0,
-    revenue: 0
-  });
-
   const [featuredProducts, setFeaturedProducts] = useState([]);
-  const [cart, setCart] = useState([]);
-  const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState(new Date());
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  
+  // Authentication durumuna göre farklı mesajlar (kullanılacak)
+  const getWelcomeMessage = () => {
+    return isAuthenticated ? 'Hoş geldiniz! AI asistanınız hazır.' : 'Giriş yaparak tüm özelliklerden yararlanın.';
+  };
+  
+  // Mesajı göster
+  const welcomeMessage = getWelcomeMessage();
 
-  useEffect(() => {
-    // Animate numbers
-    const animateNumbers = () => {
-      const targetStats = {
-        users: 1247,
-        products: 3421,
-        transactions: 8923,
-        revenue: 156789
-      };
-
-      Object.keys(targetStats).forEach(key => {
-        let current = 0;
-        const target = targetStats[key];
-        const increment = target / 50;
-        
-        const timer = setInterval(() => {
-          current += increment;
-          if (current >= target) {
-            current = target;
-            clearInterval(timer);
-          }
-          setStats(prev => ({ ...prev, [key]: Math.floor(current) }));
-        }, 50);
-      });
-    };
-
-    animateNumbers();
-  }, []);
-
-  // Featured products'ı çek
-  useEffect(() => {
-    const fetchFeaturedProducts = async () => {
-      try {
-        const response = await fetch('https://fakestoreapi.com/products?limit=6');
-        const data = await response.json();
-        
-        const formattedProducts = data.map(item => ({
-          id: `featured_${item.id}`,
-          name: item.title,
-          brand: item.category === 'electronics' ? 'TechBrand' : 
-                item.category === 'jewelery' ? 'JewelCo' :
-                item.category === "men's clothing" ? 'MensFashion' :
-                item.category === "women's clothing" ? 'WomenStyle' : 'GenericBrand',
-          price: Math.round(item.price * 30),
-          originalPrice: Math.round(item.price * 35),
-          rating: item.rating.rate,
-          reviews: item.rating.count,
-          image: item.image,
-          description: item.description,
-          category: item.category,
-          discount: Math.floor(Math.random() * 20) + 10, // 10-30% indirim
-          trendScore: Math.random() * 10,
-          trustScore: Math.random() * 5 + 3,
-          returnRate: Math.random() * 20,
-          inStock: true,
-          stockCount: Math.floor(Math.random() * 50) + 10
-        }));
-        
-        setFeaturedProducts(formattedProducts);
-      } catch (error) {
-        console.error('Featured products fetch error:', error);
-      }
-    };
-
-    fetchFeaturedProducts();
-
-    // LocalStorage'dan cart ve favorites'ı yükle
-    const savedCart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const savedFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    setCart(savedCart);
-    setFavorites(savedFavorites);
-  }, []);
-
-  const handleCardClick = (route) => {
-    navigate(route);
+  // Ana CTA
+  const handlePrimaryCTA = () => {
+    navigate('/chatbot');
+    toast.success('AI Asistanına yönlendiriliyorsunuz...');
   };
 
-  const handleAddToCart = (product) => {
-    const existingItem = cart.find(item => item.id === product.id);
-    let newCart;
-    
-    if (existingItem) {
-      newCart = cart.map(item => 
-        item.id === product.id 
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      );
-    } else {
-      newCart = [...cart, { ...product, quantity: 1 }];
+  // Hızlı aksiyonlar
+  const handleQuickAction = (action) => {
+    switch (action) {
+      case 'search':
+        navigate('/search');
+        toast.success('Akıllı arama sayfasına yönlendiriliyorsunuz...');
+        break;
+      case 'products':
+        navigate('/products');
+        toast.success('Ürün kataloğuna yönlendiriliyorsunuz...');
+        break;
+      case 'tracking':
+        navigate('/price-tracking');
+        toast.success('Fiyat takibi sayfasına yönlendiriliyorsunuz...');
+        break;
+      case 'demo':
+        toast.success('Demo başlatılıyor...');
+        setTimeout(() => {
+          navigate('/chatbot');
+        }, 1000);
+        break;
+      default:
+        break;
     }
-    
-    setCart(newCart);
-    localStorage.setItem('cart', JSON.stringify(newCart));
+  };
+
+  // Ürün işlemleri
+  const handleAddToCart = (product) => {
     toast.success(`${product.name} sepete eklendi!`);
   };
 
   const handleAddToFavorites = (product) => {
-    const isAlreadyFavorite = favorites.find(fav => fav.id === product.id);
-    let newFavorites;
-    
-    if (isAlreadyFavorite) {
-      newFavorites = favorites.filter(fav => fav.id !== product.id);
-      toast.success(`${product.name} favorilerden çıkarıldı!`);
-    } else {
-      newFavorites = [...favorites, product];
-      toast.success(`${product.name} favorilere eklendi!`);
-    }
-    
-    setFavorites(newFavorites);
-    localStorage.setItem('favorites', JSON.stringify(newFavorites));
+    toast.success(`${product.name} favorilere eklendi!`);
   };
+
+  const handleProductClick = (product) => {
+    toast.success(`${product.name} detayları açılıyor...`);
+    // Gerçek uygulamada ürün detay sayfasına yönlendirir
+    navigate(`/products/${product.id}`);
+  };
+
+  const handleViewAllProducts = () => {
+    navigate('/products');
+    toast.success('Tüm ürünlere yönlendiriliyorsunuz...');
+  };
+
+  // Ürünleri yükle
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/v1/ecommerce/search?limit=6');
+        const data = await response.json();
+        setFeaturedProducts(data.products || []);
+        setLastUpdated(new Date());
+      } catch (error) {
+        console.error('Ürünler yüklenirken hata:', error);
+        // Fallback ürünler
+        setFeaturedProducts([
+          {
+            id: 1,
+            name: "iPhone 15 Pro",
+            price: 45000,
+            rating: 4.8,
+            image: "https://via.placeholder.com/300x300?text=iPhone+15+Pro",
+            category: "Telefon",
+            brand: "Apple",
+            description: "A17 Pro çip ile güçlendirilmiş, 48MP kamera sistemi"
+          },
+          {
+            id: 2,
+            name: "Samsung Galaxy S24",
+            price: 38000,
+            rating: 4.7,
+            image: "https://via.placeholder.com/300x300?text=Galaxy+S24",
+            category: "Telefon",
+            brand: "Samsung",
+            description: "AI destekli kamera sistemi, uzun pil ömrü"
+          },
+          {
+            id: 3,
+            name: "Nike Air Max",
+            price: 1200,
+            rating: 4.6,
+            image: "https://via.placeholder.com/300x300?text=Nike+Air+Max",
+            category: "Spor Ayakkabı",
+            brand: "Nike",
+            description: "Maksimum konfor ve stil için tasarlanmış"
+          }
+        ]);
+        setLastUpdated(new Date());
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeaturedProducts();
+  }, []);
 
   return (
     <HomeContainer>
+      {/* Hero - Daha Kompakt */}
       <Hero>
-        <Title>ShopWise Dashboard</Title>
+        <Logo>
+          <LogoIcon>
+            <Brain size={28} />
+          </LogoIcon>
+          <Title>ShopWise</Title>
+        </Logo>
         <Subtitle>
-          Yapay zekâ destekli akıllı e-ticaret asistanı ile alışveriş deneyiminizi 
-          kişiselleştirin ve optimize edin
+          AI destekli e-ticaret asistanınız
         </Subtitle>
-        <SystemStatus>
-          <Activity size={16} />
-          🔵 Aktif – Son işlem: 2 dk önce
-        </SystemStatus>
       </Hero>
 
-      <GeminiHighlight>
-        <GeminiTitle>
-          <Brain size={32} />
-          Gemini AI Asistanı
-          <Sparkles size={24} />
-        </GeminiTitle>
-        <GeminiDescription>
-          Google Gemini teknolojisi ile güçlendirilmiş akıllı öneri sistemi, 
-          doğal dil arama ve kişiselleştirilmiş alışveriş deneyimi
-        </GeminiDescription>
-        <GeminiStats>
-          <GeminiStat>
-            <GeminiStatValue>98.7%</GeminiStatValue>
-            <GeminiStatLabel>Doğruluk Oranı</GeminiStatLabel>
-          </GeminiStat>
-          <GeminiStat>
-            <GeminiStatValue>2.3s</GeminiStatValue>
-            <GeminiStatLabel>Ortalama Yanıt</GeminiStatLabel>
-          </GeminiStat>
-          <GeminiStat>
-            <GeminiStatValue>15.2K</GeminiStatValue>
-            <GeminiStatLabel>Günlük Sorgu</GeminiStatLabel>
-          </GeminiStat>
-        </GeminiStats>
-      </GeminiHighlight>
+      {/* CTA - Sadece Ana Buton */}
+      <CTASection>
+        <PrimaryCTA onClick={handlePrimaryCTA}>
+          <MessageCircle size={24} />
+          Sohbete Başla
+          <ArrowRight size={20} />
+        </PrimaryCTA>
+      </CTASection>
 
-      <StatsGrid>
-        <StatCard onClick={() => handleCardClick('/products')}>
-          <StatHeader>
-            <StatIcon color="#3b82f6">
-              <Package size={24} />
-            </StatIcon>
-            <StatChange positive>
-              <TrendingUp size={16} />
-              +12.5%
-            </StatChange>
-          </StatHeader>
-          <StatValue>{stats.products.toLocaleString()}</StatValue>
-          <StatLabel>Toplam Ürün</StatLabel>
-        </StatCard>
+      {/* Hızlı Aksiyonlar */}
+      <QuickActions>
+        <QuickActionCard onClick={() => handleQuickAction('search')}>
+          <QuickActionIcon>
+            <Search size={20} />
+          </QuickActionIcon>
+          <QuickActionTitle>Akıllı Arama</QuickActionTitle>
+          <QuickActionDesc>Ürün, kategori veya marka ara</QuickActionDesc>
+        </QuickActionCard>
+        
+        <QuickActionCard onClick={() => handleQuickAction('products')}>
+          <QuickActionIcon>
+            <Package size={20} />
+          </QuickActionIcon>
+          <QuickActionTitle>Ürün Kataloğu</QuickActionTitle>
+          <QuickActionDesc>Tüm ürünleri keşfet</QuickActionDesc>
+        </QuickActionCard>
+        
+        <QuickActionCard onClick={() => handleQuickAction('tracking')}>
+          <QuickActionIcon>
+            <TrendingUp size={20} />
+          </QuickActionIcon>
+          <QuickActionTitle>Fiyat Takibi</QuickActionTitle>
+          <QuickActionDesc>İndirimleri kaçırma</QuickActionDesc>
+        </QuickActionCard>
+        
+        <QuickActionCard onClick={() => handleQuickAction('demo')}>
+          <QuickActionIcon>
+            <Play size={20} />
+          </QuickActionIcon>
+          <QuickActionTitle>Demo İzle</QuickActionTitle>
+          <QuickActionDesc>Nasıl çalıştığını gör</QuickActionDesc>
+        </QuickActionCard>
+      </QuickActions>
 
-        <StatCard onClick={() => handleCardClick('/search')}>
-          <StatHeader>
-            <StatIcon color="#10b981">
-              <Users size={24} />
-            </StatIcon>
-            <StatChange positive>
-              <TrendingUp size={16} />
-              +8.3%
-            </StatChange>
-          </StatHeader>
-          <StatValue>{stats.users.toLocaleString()}</StatValue>
-          <StatLabel>Aktif Kullanıcı</StatLabel>
-        </StatCard>
+      {/* Metrikler - Kompakt */}
+      <MetricsSection>
+        <MetricsGrid>
+          <MetricCard>
+            <MetricIcon>
+              <CheckCircle size={20} />
+            </MetricIcon>
+            <MetricValue>98.7%</MetricValue>
+            <MetricLabel>Doğruluk Oranı</MetricLabel>
+          </MetricCard>
+          <MetricCard>
+            <MetricIcon>
+              <Zap size={20} />
+            </MetricIcon>
+            <MetricValue>0.8s</MetricValue>
+            <MetricLabel>Ortalama Yanıt</MetricLabel>
+          </MetricCard>
+          <MetricCard>
+            <MetricIcon>
+              <Users size={20} />
+            </MetricIcon>
+            <MetricValue>2.8K</MetricValue>
+            <MetricLabel>Günlük Sorgu</MetricLabel>
+          </MetricCard>
+        </MetricsGrid>
+      </MetricsSection>
 
-        <StatCard onClick={() => handleCardClick('/chatbot')}>
-          <StatHeader>
-            <StatIcon color="#f59e0b">
-              <ShoppingCart size={24} />
-            </StatIcon>
-            <StatChange positive>
-              <TrendingUp size={16} />
-              +15.7%
-            </StatChange>
-          </StatHeader>
-          <StatValue>{stats.transactions.toLocaleString()}</StatValue>
-          <StatLabel>Günlük İşlem</StatLabel>
-        </StatCard>
-
-        <StatCard onClick={() => handleCardClick('/reviews')}>
-          <StatHeader>
-            <StatIcon color="#ef4444">
-              <Zap size={24} />
-            </StatIcon>
-            <StatChange positive>
-              <TrendingUp size={16} />
-              +22.1%
-            </StatChange>
-          </StatHeader>
-          <StatValue>₺{stats.revenue.toLocaleString()}</StatValue>
-          <StatLabel>Aylık Gelir</StatLabel>
-        </StatCard>
-      </StatsGrid>
-
-      <FeaturedSection>
-        <SectionTitle>🔥 Öne Çıkan Ürünler</SectionTitle>
+      {/* Öne Çıkan Ürünler */}
+      <ProductsSection>
+        <SectionHeader>
+          <SectionTitle>
+            <Package size={28} />
+            Öne Çıkan Ürünler
+          </SectionTitle>
+          <ViewAllButton onClick={handleViewAllProducts}>
+            <ExternalLink size={16} />
+            Tümünü Gör
+          </ViewAllButton>
+        </SectionHeader>
         <ProductsGrid>
-          {featuredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onAddToCart={() => handleAddToCart(product)}
-              onAddToFavorites={() => handleAddToFavorites(product)}
-              onCompare={() => {}}
-              onTrackPrice={() => {}}
-              onQuickView={() => navigate('/products')}
-              isInCart={cart.some(item => item.id === product.id)}
-              isInFavorites={favorites.some(fav => fav.id === product.id)}
-              isInCompare={false}
-            />
-          ))}
+          {loading ? (
+            // Skeleton loader
+            Array.from({ length: 3 }).map((_, index) => (
+              <SkeletonCard key={index}>
+                <SkeletonImage />
+                <SkeletonText />
+                <SkeletonText />
+                <SkeletonText />
+              </SkeletonCard>
+            ))
+          ) : (
+            featuredProducts.map((product) => (
+              <div key={product.id} onClick={() => handleProductClick(product)}>
+                <ProductCard
+                  product={product}
+                  onAddToCart={() => handleAddToCart(product)}
+                  onAddToFavorites={() => handleAddToFavorites(product)}
+                />
+              </div>
+            ))
+          )}
         </ProductsGrid>
-        <ViewAllButton onClick={() => navigate('/products')}>
-          Tüm Ürünleri Görüntüle
-        </ViewAllButton>
-      </FeaturedSection>
+      </ProductsSection>
 
-      {/* <FeaturesGrid>
-        <FeatureCard 
-          gradient="linear-gradient(90deg, #667eea, #764ba2)"
-          onClick={() => handleCardClick('/chatbot')}
-        >
-          <FeatureHeader>
-            <FeatureIcon color="#667eea" animated>
-              <Brain size={32} />
+      {/* Özellikler - Temiz */}
+      <FeaturesSection>
+        <FeaturesTitle>
+          <Sparkles size={28} />
+          AI Destekli Özellikler
+        </FeaturesTitle>
+        <FeaturesGrid>
+          <FeatureCard onClick={() => handleQuickAction('demo')}>
+            <FeatureIcon>
+              <Brain size={24} />
             </FeatureIcon>
-            <div>
-              <FeatureTitle>Gemini ChatBot</FeatureTitle>
-              <FeatureBadge>
-                <Sparkles size={14} />
-                AI Aktif
-              </FeatureBadge>
-            </div>
-          </FeatureHeader>
-          <FeatureDescription>
-            Doğal dil ile ürün arama, öneri alma ve sorularınızı yanıtlama. 
-            Gemini AI teknolojisi ile güçlendirilmiş akıllı asistan.
-          </FeatureDescription>
-          <ActionButton>
-            Sohbete Başla
-            <ArrowRight size={16} />
-          </ActionButton>
-        </FeatureCard>
+            <FeatureTitle>Akıllı Chatbot</FeatureTitle>
+            <FeatureDescription>
+              Gemini AI ile doğal dil işleme, ürün önerileri ve müşteri desteği
+            </FeatureDescription>
+          </FeatureCard>
+          <FeatureCard onClick={() => handleQuickAction('search')}>
+            <FeatureIcon>
+              <Search size={24} />
+            </FeatureIcon>
+            <FeatureTitle>Akıllı Arama</FeatureTitle>
+            <FeatureDescription>
+              Görsel ve sesli arama, fiyat karşılaştırması ve trend analizi
+            </FeatureDescription>
+          </FeatureCard>
+          <FeatureCard onClick={() => handleQuickAction('tracking')}>
+            <FeatureIcon>
+              <TrendingUp size={24} />
+            </FeatureIcon>
+            <FeatureTitle>Fiyat Takibi</FeatureTitle>
+            <FeatureDescription>
+              Otomatik fiyat izleme, indirim uyarıları ve en iyi zaman analizi
+            </FeatureDescription>
+          </FeatureCard>
+          <FeatureCard onClick={() => handleQuickAction('products')}>
+            <FeatureIcon>
+              <ShoppingCart size={24} />
+            </FeatureIcon>
+            <FeatureTitle>Akıllı Sepet</FeatureTitle>
+            <FeatureDescription>
+              Kişiselleştirilmiş öneriler, stok kontrolü ve hızlı ödeme
+            </FeatureDescription>
+          </FeatureCard>
+          <FeatureCard onClick={() => handleQuickAction('demo')}>
+            <FeatureIcon>
+              <Star size={24} />
+            </FeatureIcon>
+            <FeatureTitle>Yorum Analizi</FeatureTitle>
+            <FeatureDescription>
+              AI destekli yorum özetleme ve duygu analizi
+            </FeatureDescription>
+          </FeatureCard>
+          <FeatureCard onClick={() => handleQuickAction('demo')}>
+            <FeatureIcon>
+              <Shield size={24} />
+            </FeatureIcon>
+            <FeatureTitle>Güvenli Alışveriş</FeatureTitle>
+            <FeatureDescription>
+              Korumalı ödeme sistemi ve güvenlik garantisi
+            </FeatureDescription>
+          </FeatureCard>
+        </FeaturesGrid>
+      </FeaturesSection>
 
-        <FeatureCard 
-          gradient="linear-gradient(90deg, #f093fb, #f5576c)"
-          onClick={() => handleCardClick('/search')}
-        >
-          <FeatureHeader>
-            <FeatureIcon color="#f093fb">
-              <Search size={32} />
-            </FeatureIcon>
-            <div>
-              <FeatureTitle>Akıllı Arama</FeatureTitle>
-              <FeatureBadge>
-                <Sparkles size={14} />
-                AI Destekli
-              </FeatureBadge>
-            </div>
-          </FeatureHeader>
-          <FeatureDescription>
-            Görsel arama, sesli komutlar ve doğal dil ile ürün bulma. 
-            Gemini AI ile anlamlı sonuçlar ve kişiselleştirilmiş öneriler.
-          </FeatureDescription>
-          <ActionButton>
-            Aramaya Başla
-            <ArrowRight size={16} />
-          </ActionButton>
-        </FeatureCard>
-
-        <FeatureCard 
-          gradient="linear-gradient(90deg, #4facfe, #00f2fe)"
-          onClick={() => handleCardClick('/comparison')}
-        >
-          <FeatureHeader>
-            <FeatureIcon color="#4facfe">
-              <Scale size={32} />
-            </FeatureIcon>
-            <div>
-              <FeatureTitle>Ürün Karşılaştırma</FeatureTitle>
-              <FeatureBadge>
-                <Sparkles size={14} />
-                AI Analiz
-              </FeatureBadge>
-            </div>
-          </FeatureHeader>
-          <FeatureDescription>
-            Detaylı ürün karşılaştırması ve Gemini AI önerileri. 
-            Fiyat, performans ve özellik analizi ile en iyi seçimi yapın.
-          </FeatureDescription>
-          <ActionButton>
-            Karşılaştır
-            <ArrowRight size={16} />
-          </ActionButton>
-        </FeatureCard>
-
-        <FeatureCard 
-          gradient="linear-gradient(90deg, #43e97b, #38f9d7)"
-          onClick={() => handleCardClick('/price-tracking')}
-        >
-          <FeatureHeader>
-            <FeatureIcon color="#43e97b">
-              <Bell size={32} />
-            </FeatureIcon>
-            <div>
-              <FeatureTitle>Fiyat Takibi</FeatureTitle>
-              <FeatureBadge>
-                <Sparkles size={14} />
-                Otomatik
-              </FeatureBadge>
-            </div>
-          </FeatureHeader>
-          <FeatureDescription>
-            Ürün fiyatlarını takip edin ve düşüşlerde anında bildirim alın. 
-            Gemini AI ile fiyat tahminleri ve en uygun alım zamanı önerileri.
-          </FeatureDescription>
-          <ActionButton>
-            Takip Et
-            <ArrowRight size={16} />
-          </ActionButton>
-        </FeatureCard>
-
-        <FeatureCard 
-          gradient="linear-gradient(90deg, #fa709a, #fee140)"
-          onClick={() => handleCardClick('/reviews')}
-        >
-          <FeatureHeader>
-            <FeatureIcon color="#fa709a">
-              <Star size={32} />
-            </FeatureIcon>
-            <div>
-              <FeatureTitle>Yorum Analizi</FeatureTitle>
-              <FeatureBadge>
-                <Sparkles size={14} />
-                AI Özet
-              </FeatureBadge>
-            </div>
-          </FeatureHeader>
-          <FeatureDescription>
-            Gemini AI ile yorum özetleme ve duygu analizi. 
-            Kullanıcı deneyimlerini hızlıca analiz edin ve karar verin.
-          </FeatureDescription>
-          <ActionButton>
-            Analiz Et
-            <ArrowRight size={16} />
-          </ActionButton>
-        </FeatureCard>
-
-        <FeatureCard 
-          gradient="linear-gradient(90deg, #a8edea, #fed6e3)"
-          onClick={() => handleCardClick('/addresses')}
-        >
-          <FeatureHeader>
-            <FeatureIcon color="#a8edea">
-              <MapPin size={32} />
-            </FeatureIcon>
-            <div>
-              <FeatureTitle>Adres Düzeltme</FeatureTitle>
-              <FeatureBadge>
-                <Sparkles size={14} />
-                AI Doğrulama
-              </FeatureBadge>
-            </div>
-          </FeatureHeader>
-          <FeatureDescription>
-            Eksik veya hatalı adresleri Gemini AI ile düzeltin ve doğrulayın. 
-            Teslimat sorunlarını minimize edin.
-          </FeatureDescription>
-          <ActionButton>
-            Düzelt
-            <ArrowRight size={16} />
-          </ActionButton>
-        </FeatureCard>
-      </FeaturesGrid> */}
+      {/* Status Badge - En altta */}
+      <StatusBadge>
+        <Clock size={12} />
+        Son güncelleme: {lastUpdated.toLocaleTimeString()}
+      </StatusBadge>
     </HomeContainer>
   );
 }

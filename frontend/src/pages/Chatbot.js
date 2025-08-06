@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes, css } from 'styled-components';
-import { Send, Bot, User, Sparkles, Brain, ShoppingBag, Star, MessageCircle, Zap, Shield } from 'lucide-react';
+import { Send, Bot, User, Brain, ShoppingBag, Star, MessageCircle, Zap, Shield, Crown, Store } from 'lucide-react';
 import { useMutation } from 'react-query';
 import toast from 'react-hot-toast';
 
 import { sampleProducts } from '../data/products';
+import { useAuth } from '../contexts/AuthContext';
 
 // Keyframes
 
@@ -330,27 +331,11 @@ const SendButton = styled.button`
 `;
 
 // Suggestions Section
-const SuggestionsContainer = styled.div`
-  padding: 1.5rem 2rem;
-  background: #f8fafc;
-  border-top: 1px solid #e2e8f0;
-`;
+// Removed unused SuggestionsContainer
 
-const SuggestionsTitle = styled.h3`
-  font-size: 1rem;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`;
+// Removed unused SuggestionsTitle
 
-const SuggestionsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-`;
+// Removed unused SuggestionsGrid
 
 const SuggestionButton = styled.button`
   padding: 0.75rem 1rem;
@@ -504,17 +489,93 @@ function Chatbot() {
   const [isTyping, setIsTyping] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(true);
   const messagesEndRef = useRef(null);
+  
+  const { user, isAuthenticated, api } = useAuth();
 
-  const quickSuggestions = [
-    "En popüler ürünler hangileri?",
-    "Elektronik kategorisinde indirimli ürünler",
-    "500 TL altında öneriler",
-    "En yüksek puanlı telefon modelleri",
-    "Kadın giyim trendleri",
-    "Kargo süresi ne kadar?",
-    "İade koşulları neler?",
-    "Güvenli ödeme yöntemleri"
-  ];
+  // Rol bazlı öneriler
+  const getRoleSuggestions = () => {
+    if (!isAuthenticated) {
+      return [
+        "Platform özellikleri neler?",
+        "Nasıl kayıt olabilirim?",
+        "Güvenli alışveriş yapabilir miyim?",
+        "Satıcı hesabı açabilir miyim?"
+      ];
+    }
+
+    switch (user?.role) {
+      case 'customer':
+        return [
+          "500 TL altında telefon öner",
+          "En çok satan ürünler neler?",
+          "Kargo ücreti ne kadar?",
+          "İade işlemi nasıl yapılır?"
+        ];
+      case 'seller':
+        return [
+          "Ürün açıklaması nasıl yazılır?",
+          "Stok nasıl güncellenir?",
+          "Satış raporlarını nasıl görürüm?",
+          "SEO için ipuçları ver"
+        ];
+      case 'admin':
+        return [
+          "Sistem durumu nasıl?",
+          "Kullanıcı istatistikleri",
+          "Platform performansı",
+          "Güvenlik ayarları"
+        ];
+      default:
+        return [
+          "En popüler ürünler hangileri?",
+          "Kargo süresi ne kadar?",
+          "İade koşulları neler?",
+          "Güvenli ödeme yöntemleri"
+        ];
+    }
+  };
+
+  const quickSuggestions = getRoleSuggestions();
+
+  // Rol bazlı avatar ve başlık
+  const getRoleInfo = () => {
+    if (!isAuthenticated) {
+      return {
+        title: "ShopWise Genel Asistanı",
+        icon: <Bot />,
+        color: "#3b82f6"
+      };
+    }
+
+    switch (user?.role) {
+      case 'customer':
+        return {
+          title: "ShopWise Müşteri Asistanı",
+          icon: <ShoppingBag />,
+          color: "#10b981"
+        };
+      case 'seller':
+        return {
+          title: "ShopWise Satıcı Asistanı", 
+          icon: <Store />,
+          color: "#f59e0b"
+        };
+      case 'admin':
+        return {
+          title: "ShopWise Admin Asistanı",
+          icon: <Crown />,
+          color: "#8b5cf6"
+        };
+      default:
+        return {
+          title: "ShopWise AI Asistanı",
+          icon: <Bot />,
+          color: "#3b82f6"
+        };
+    }
+  };
+
+  const roleInfo = getRoleInfo();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -529,23 +590,40 @@ function Chatbot() {
       setIsTyping(true);
       
       try {
-        // Try real Gemini API first
-        const response = await fetch('/api/v1/chatbot/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            message: message,
-            context: 'ShopWise e-ticaret asistanı. Kullanıcıya ürün önerileri, kampanyalar ve genel bilgiler ver. Türkçe yanıt ver.'
-          })
-        });
+        // Rol bazlı API endpoint seç
+        const endpoint = isAuthenticated ? '/api/v1/chatbot/chat/role-based' : '/api/v1/chatbot/chat';
+        const requestBody = isAuthenticated 
+          ? {
+              message: message,
+              user_role: user?.role || 'guest',
+              context: `Kullanıcı: ${user?.full_name || 'Misafir'} (${user?.role || 'guest'})`
+            }
+          : {
+              message: message,
+              context: 'ShopWise e-ticaret asistanı. Kullanıcıya ürün önerileri, kampanyalar ve genel bilgiler ver. Türkçe yanıt ver.'
+            };
 
-        if (!response.ok) {
-          throw new Error('API yanıt vermedi');
+        // API çağrısı (auth varsa token ile)
+        let response;
+        let data;
+        
+        if (isAuthenticated) {
+          response = await api.post(endpoint.replace('/api/v1', ''), requestBody);
+          data = response.data;
+        } else {
+          response = await fetch(`http://localhost:8000${endpoint}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody)
+          });
+          
+          if (!response.ok) {
+            throw new Error('API yanıt vermedi');
+          }
+          data = await response.json();
         }
-
-        const data = await response.json();
         let finalResponse = data.response;
         
         // Add product recommendations if relevant
@@ -575,7 +653,7 @@ function Chatbot() {
         return { response: finalResponse };
         
       } catch (error) {
-        console.error('Gemini API Error:', error);
+        console.error('Gemini API Hatası:', error);
         
         // Fallback to intelligent mock response if API fails
         let response = '';
@@ -635,7 +713,7 @@ function Chatbot() {
         setMessages(prev => [...prev, newMessage]);
       },
       onError: (error) => {
-        console.error('Message send error:', error);
+        console.error('Mesaj gönderme hatası:', error);
         toast.error('Mesaj gönderilemedi. Lütfen tekrar deneyin.');
       }
     }
@@ -692,9 +770,9 @@ function Chatbot() {
   return (
     <ChatbotContainer>
       <ChatHeader>
-        <Title>
-          <Sparkles />
-          ShopWise AI Asistanı
+        <Title style={{ color: roleInfo.color }}>
+          {roleInfo.icon}
+          {roleInfo.title}
           <Brain />
         </Title>
         <Subtitle>

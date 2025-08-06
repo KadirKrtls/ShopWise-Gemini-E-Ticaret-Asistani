@@ -1,25 +1,24 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Star, Heart, ShoppingCart, Scale, TrendingUp, AlertTriangle, Eye } from 'lucide-react';
+import { Star, Heart, ShoppingCart, Eye, TrendingUp } from 'lucide-react';
 
 const Card = styled.div`
-  background: white;
-  border-radius: 1.5rem;
-  padding: 1.5rem;
-  box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e2e8f0;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--medium-gray);
+  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  height: 550px;
-  display: flex;
-  flex-direction: column;
+  height: 480px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
 
   &:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 25px 25px -5px rgba(0, 0, 0, 0.1);
-    border-color: #3b82f6;
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-blue);
     
     .action-buttons {
       opacity: 1;
@@ -30,32 +29,12 @@ const Card = styled.div`
       transform: scale(1.05);
     }
   }
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: ${props => {
-      if (props.discount > 20) return 'linear-gradient(90deg, #ef4444, #dc2626)';
-      if (props.discount > 10) return 'linear-gradient(90deg, #f59e0b, #d97706)';
-      if (props.discount > 0) return 'linear-gradient(90deg, #10b981, #059669)';
-      return 'linear-gradient(90deg, #3b82f6, #2563eb)';
-    }};
-  }
 `;
 
 const ImageContainer = styled.div`
   width: 100%;
   height: 200px;
-  background: #f8fafc;
-  border-radius: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
+  background: var(--light-gray);
   position: relative;
   overflow: hidden;
   
@@ -63,167 +42,157 @@ const ImageContainer = styled.div`
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 1rem;
-    transition: transform 0.4s ease;
+    border-top-left-radius: var(--radius-md);
+    border-top-right-radius: var(--radius-md);
+    transition: transform 0.3s ease;
   }
 `;
 
 const DiscountBadge = styled.div`
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
-  padding: 0.5rem 0.75rem;
-  border-radius: 1rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-  transform: rotate(-5deg);
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  background: var(--error);
+  color: var(--white);
+  padding: 4px 8px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
   z-index: 10;
   
   &::before {
-    content: '🔥';
-    margin-right: 0.25rem;
-  }
-  
-  animation: pulse 2s infinite;
-  
-  @keyframes pulse {
-    0%, 100% { transform: rotate(-5deg) scale(1); }
-    50% { transform: rotate(-5deg) scale(1.05); }
+    content: "🔥";
+    margin-right: 4px;
   }
 `;
 
 const ProductInfo = styled.div`
-  flex: 1;
+  padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
-  margin-bottom: 1rem;
+  gap: var(--spacing-sm);
 `;
 
 const ProductName = styled.h3`
-  font-size: 1.125rem;
+  font-size: 18px;
   font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 0.5rem;
+  margin: var(--spacing-sm) 0 4px;
+  color: var(--text-primary);
   line-height: 1.4;
-`;
-
-const ProductBrand = styled.p`
-  color: #64748b;
-  font-size: 0.875rem;
-  margin-bottom: 0.5rem;
-`;
-
-const ProductDescription = styled.p`
-  color: #6b7280;
-  font-size: 0.8rem;
-  line-height: 1.4;
-  margin: 0.5rem 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 `;
 
+const ProductBrand = styled.p`
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: var(--spacing-sm);
+`;
+
+const ProductDescription = styled.p`
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  max-height: 2.8em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+`;
+
 const PriceContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: var(--spacing-sm);
+  margin: var(--spacing-sm) 0;
 `;
 
 const CurrentPrice = styled.span`
-  font-size: 1.25rem;
+  font-size: 20px;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
 `;
 
 const OriginalPrice = styled.span`
-  font-size: 1rem;
-  color: #94a3b8;
+  font-size: 14px;
+  color: var(--text-muted);
   text-decoration: line-through;
 `;
 
 const RatingContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  margin-top: var(--spacing-sm);
 `;
 
 const Rating = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 4px;
 `;
 
 const RatingText = styled.span`
-  font-size: 0.875rem;
-  color: #64748b;
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-left: 4px;
 `;
 
 const StockInfo = styled.div`
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: ${props => props.inStock ? '#10b981' : '#ef4444'};
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #e2e8f0;
-  margin-bottom: 0.5rem;
-`;
-
-const StatsContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-`;
-
-const Stat = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  font-size: 0.75rem;
-  color: #64748b;
+  margin-top: var(--spacing-sm);
+  color: var(--success);
+  font-weight: 500;
+  font-size: 14px;
+  
+  &::before {
+    content: "✔️";
+    margin-right: 6px;
+  }
 `;
 
 const ActionButtons = styled.div`
+  padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  opacity: 0.7;
-  transform: translateY(10px);
+  gap: var(--spacing-sm);
+  opacity: 0.9;
+  transform: translateY(4px);
   transition: all 0.3s ease;
 `;
 
 const MainActions = styled.div`
   display: flex;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
 `;
 
 const SecondaryActions = styled.div`
   display: flex;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
 `;
 
 const Button = styled.button`
   flex: 1;
-  padding: 0.75rem 0.5rem;
+  padding: var(--spacing-sm) var(--spacing-md);
   border: none;
-  border-radius: 0.75rem;
-  font-size: 0.875rem;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  gap: var(--spacing-sm);
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
   }
 
   &:active {
@@ -231,53 +200,31 @@ const Button = styled.button`
   }
 
   &.primary {
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    color: white;
+    background: var(--primary-blue);
+    color: var(--white);
     
     &:hover {
-      background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+      background: var(--secondary-blue);
     }
   }
 
   &.secondary {
-    background: #f8fafc;
-    color: #475569;
-    border: 1px solid #e2e8f0;
+    background: transparent;
+    border: 1px solid var(--medium-gray);
+    color: var(--text-primary);
     
     &:hover {
-      background: #f1f5f9;
-      border-color: #cbd5e1;
+      border-color: var(--primary-blue);
+      color: var(--primary-blue);
     }
   }
 
   &.danger {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
+    background: var(--error);
+    color: var(--white);
     
     &:hover {
-      background: linear-gradient(135deg, #dc2626, #b91c1c);
-      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-    }
-  }
-
-  &.success {
-    background: linear-gradient(135deg, #10b981, #059669);
-    color: white;
-    
-    &:hover {
-      background: linear-gradient(135deg, #059669, #047857);
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-    }
-  }
-
-  &.warning {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    color: white;
-    
-    &:hover {
-      background: linear-gradient(135deg, #d97706, #b45309);
-      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+      background: #d32f2f;
     }
   }
 
@@ -288,27 +235,28 @@ const Button = styled.button`
     
     &:hover {
       transform: none;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: none;
     }
   }
 `;
 
 const TrustScore = styled.div`
   position: absolute;
-  top: 1rem;
-  left: 1rem;
-  background: rgba(16, 185, 129, 0.9);
-  color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.5rem;
-  font-size: 0.75rem;
+  top: var(--spacing-sm);
+  left: var(--spacing-sm);
+  background: rgba(76, 175, 80, 0.9);
+  color: var(--white);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 4px;
+  z-index: 10;
 `;
 
-function ProductCard({ product, onAddToCart, onAddToFavorites, onCompare, onTrackPrice, onQuickView, isInCart, isInFavorites, isInCompare }) {
+function ProductCard({ product, onAddToCart, onAddToFavorites, onQuickView, isInCart, isInFavorites }) {
   const {
     name,
     brand,
@@ -319,19 +267,19 @@ function ProductCard({ product, onAddToCart, onAddToFavorites, onCompare, onTrac
     image,
     description,
     discount,
-    trendScore,
     trustScore,
-    returnRate,
     inStock,
     stockCount
   } = product;
 
   return (
-    <Card discount={discount}>
-      <TrustScore>
-        <TrendingUp size={12} />
-        %{trustScore}
-      </TrustScore>
+    <Card>
+      {trustScore && (
+        <TrustScore>
+          <TrendingUp size={12} />
+          %{trustScore}
+        </TrustScore>
+      )}
       
       <ImageContainer>
         <img src={image} alt={name} className="product-image" />
@@ -365,30 +313,19 @@ function ProductCard({ product, onAddToCart, onAddToFavorites, onCompare, onTrac
           <RatingText>({reviews} yorum)</RatingText>
         </RatingContainer>
 
-        <StockInfo inStock={inStock}>
+        <StockInfo>
           {inStock ? (
             stockCount <= 10 ? (
-              <span style={{color: '#f59e0b'}}>⚠️ Az stok: {stockCount} adet</span>
+              <span style={{color: '#f57c00'}}>⚠️ Az stok: {stockCount} adet</span>
             ) : stockCount <= 5 ? (
               <span style={{color: '#ef4444'}}>🔥 Son {stockCount} adet!</span>
             ) : (
-              <span>✅ Stokta: {stockCount} adet</span>
+              <span>Stokta: {stockCount} adet</span>
             )
           ) : (
-            <span>❌ Stokta yok</span>
+            <span style={{color: '#ef4444'}}>❌ Stokta yok</span>
           )}
         </StockInfo>
-
-        <StatsContainer>
-          <Stat>
-            <TrendingUp size={12} />
-            {trendScore?.toFixed(1)}
-          </Stat>
-          <Stat>
-            <AlertTriangle size={12} />
-            %{returnRate?.toFixed(1)}
-          </Stat>
-        </StatsContainer>
       </ProductInfo>
 
       <ActionButtons className="action-buttons">
@@ -418,22 +355,6 @@ function ProductCard({ product, onAddToCart, onAddToFavorites, onCompare, onTrac
             title="Favorilere Ekle"
           >
             <Heart size={14} fill={isInFavorites ? "currentColor" : "none"} />
-          </Button>
-          
-          <Button 
-            className={isInCompare ? "warning" : "secondary"}
-            onClick={() => onCompare && onCompare(product)}
-            title="Karşılaştır"
-          >
-            <Scale size={14} />
-          </Button>
-          
-          <Button 
-            className="secondary"
-            onClick={() => onTrackPrice && onTrackPrice(product)}
-            title="Fiyat Takibi"
-          >
-            <TrendingUp size={14} />
           </Button>
         </SecondaryActions>
       </ActionButtons>

@@ -274,7 +274,7 @@ function Addresses() {
       },
       onError: (error) => {
         toast.error('Adres düzeltilemedi.');
-        console.error('Correct address error:', error);
+        console.error('Adres düzeltme hatası:', error);
       }
     }
   );
@@ -293,7 +293,7 @@ function Addresses() {
       },
       onError: (error) => {
         toast.error('Adres doğrulanamadı.');
-        console.error('Validate address error:', error);
+        console.error('Adres doğrulama hatası:', error);
       }
     }
   );
@@ -312,7 +312,7 @@ function Addresses() {
       },
       onError: (error) => {
         toast.error('Adres formatı düzenlenemedi.');
-        console.error('Format address error:', error);
+        console.error('Adres formatlama hatası:', error);
       }
     }
   );

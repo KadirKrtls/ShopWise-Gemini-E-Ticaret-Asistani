@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Bell, TrendingUp, TrendingDown, DollarSign, Package, AlertTriangle, Plus } from 'lucide-react';
-import { useMutation, useQuery } from 'react-query';
-import axios from 'axios';
+import { Bell, TrendingUp, TrendingDown, DollarSign, Plus } from 'lucide-react';
+import { useMutation } from 'react-query';
 import toast from 'react-hot-toast';
 
 const TrackingContainer = styled.div`
@@ -423,6 +422,11 @@ function PriceTracking() {
     removeTrackingMutation.mutate(productId);
   };
 
+  const handleAddTracking = () => {
+    toast.success('Yeni ürün takibi özelliği yakında aktif olacak!');
+    // Gerçek uygulamada ürün arama modalı açılır
+  };
+
   return (
     <TrackingContainer>
       <Header>
@@ -506,7 +510,7 @@ function PriceTracking() {
       </TrackingGrid>
 
       <div style={{ textAlign: 'center' }}>
-        <AddTrackingButton>
+        <AddTrackingButton onClick={handleAddTracking}>
           <Plus size={20} />
           Yeni Ürün Takip Et
         </AddTrackingButton>

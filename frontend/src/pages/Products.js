@@ -7,7 +7,6 @@ import {
   Star, 
   TrendingUp,
   Brain,
-  Eye,
   Search,
   Filter,
   Grid,
@@ -19,7 +18,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import ProductCard from '../components/ProductCard';
-import { sampleProducts } from '../data/products';
+import { getTrendingTrendyolProducts } from '../utils/ecommerceAPI';
 
 const ProductsContainer = styled.div`
   max-width: 1200px;
@@ -818,27 +817,110 @@ function Products() {
   const [showQuickView, setShowQuickView] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState(null);
 
-  // Kendi ürün verilerimizi kullan
+  // Gerçek API'den ürün verilerini yükle
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
         
-        // Gerçek veri setimizi import et
-        const { sampleProducts } = await import('../data/products');
+        // İlk olarak gerçek Trendyol API'sini dene
+        let realProducts = [];
         
-        // Simulated loading için biraz bekle
-        await new Promise(resolve => setTimeout(resolve, 800));
+        try {
+          // Gerçek e-ticaret API'lerinden ürün çek
+          const realApiResponse = await fetch('http://localhost:8000/api/v1/ecommerce/search?limit=30');
+          if (realApiResponse.ok) {
+            const realApiData = await realApiResponse.json();
+            if (realApiData.products && realApiData.products.length > 0) {
+              realProducts = [...realProducts, ...realApiData.products];
+              toast.success(`${realApiData.products.length} gerçek ürün yüklendi! (${realApiData.source})`, {
+                icon: '🔥'
+              });
+            }
+          }
+        } catch (error) {
+          console.log('Gerçek API hatası:', error);
+          // Fallback: Mock ürünlerini yükle
+          const mockProducts = getTrendingTrendyolProducts(30);
+          realProducts = [...mockProducts];
+          toast.success(`${realProducts.length} mock ürün yüklendi (fallback)!`, {
+            icon: '📦'
+          });
+        }
         
-        // Kendi veri setimizi kullan
-        setProducts(sampleProducts);
+        // Sonra diğer API'leri dene
+        const responses = await Promise.allSettled([
+          fetch('https://fakestoreapi.com/products'),
+          fetch('https://dummyjson.com/products?limit=10')
+        ]);
+        
+        // FakeStore API sonucu - Daha fazla ürün al
+        if (responses[0].status === 'fulfilled' && responses[0].value.ok) {
+          const fakeStoreData = await responses[0].value.json();
+          realProducts = [...realProducts, ...fakeStoreData.slice(0, 20).map(item => ({
+            id: `fs_${item.id}`,
+            name: item.title,
+            brand: item.category.charAt(0).toUpperCase() + item.category.slice(1),
+            price: Math.round(item.price * 30), // USD to TRY conversion
+            originalPrice: Math.round(item.price * 32),
+            rating: item.rating?.rate || 4.0,
+            reviews: item.rating?.count || Math.floor(Math.random() * 500) + 50,
+            image: item.image,
+            description: item.description,
+            features: [item.category, "Garantili", "Hızlı Kargo", "İade Edilebilir"],
+            inStock: true,
+            stockCount: Math.floor(Math.random() * 50) + 10,
+            discount: Math.floor(Math.random() * 20),
+            trendScore: Math.floor(Math.random() * 30) + 70,
+            trustScore: Math.floor(Math.random() * 20) + 80,
+            returnRate: Math.floor(Math.random() * 10) + 2,
+            category: item.category.charAt(0).toUpperCase() + item.category.slice(1)
+          }))];
+        }
+        
+        // DummyJSON API sonucu
+        if (responses[1].status === 'fulfilled' && responses[1].value.ok) {
+          const dummyData = await responses[1].value.json();
+          realProducts = [...realProducts, ...dummyData.products.slice(0, 10).map(item => ({
+            id: `dj_${item.id}`,
+            name: item.title,
+            brand: item.brand || item.category,
+            price: Math.round(item.price * 30),
+            originalPrice: Math.round(item.price * 32),
+            rating: item.rating || 4.0,
+            reviews: Math.floor(Math.random() * 500) + 50,
+            image: item.thumbnail || item.images?.[0] || item.image,
+            description: item.description,
+            features: [item.category, "Garantili", "Hızlı Kargo", "İade Edilebilir"],
+            inStock: item.stock > 0,
+            stockCount: item.stock || Math.floor(Math.random() * 50) + 10,
+            discount: Math.round(item.discountPercentage) || 0,
+            trendScore: Math.floor(Math.random() * 30) + 70,
+            trustScore: Math.floor(Math.random() * 20) + 80,
+            returnRate: Math.floor(Math.random() * 10) + 2,
+            category: item.category.charAt(0).toUpperCase() + item.category.slice(1)
+          }))];
+        }
+        
+        // Eğer API'lerden veri geldi ise kullan
+        if (realProducts.length > 0) {
+          setProducts(realProducts);
+          toast.success(`${realProducts.length} gerçek ürün yüklendi!`);
+        } else {
+          // Fallback olarak kendi verimizi kullan
+          const { sampleProducts } = await import('../data/products');
+          setProducts(sampleProducts);
+          toast.info('Mock veriler kullanılıyor (API erişimi yok)');
+        }
+        
         setLoading(false);
       } catch (error) {
         console.error('Ürünler yüklenirken hata:', error);
-        // Hata durumunda da kendi verimizi kullan
+        // Hata durumunda kendi verimizi kullan
         const { sampleProducts } = await import('../data/products');
         setProducts(sampleProducts);
         setLoading(false);
+        toast.error('API hatası - Mock veriler kullanılıyor');
       }
     };
 
@@ -966,15 +1048,79 @@ function Products() {
     setShowQuickView(true);
   };
 
-  const handleAIFeature = (type) => {
+  const handleAIFeature = async (type) => {
     setAIModalType(type);
     setShowAIModal(true);
     setAILoading(true);
     
-    setTimeout(() => {
+    try {
+      let result = '';
+      
+      switch (type) {
+        case 'description':
+          // AI ürün açıklaması oluştur
+          const descriptionResponse = await fetch('http://localhost:8000/api/v1/ai/description', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              product_name: "Örnek Ürün",
+              category: "Elektronik",
+              features: ["Yüksek kalite", "Uzun ömürlü", "Garantili"]
+            })
+          });
+          
+          if (descriptionResponse.ok) {
+            const data = await descriptionResponse.json();
+            result = data.description;
+          } else {
+            result = "Ürün açıklaması oluşturulamadı.";
+          }
+          break;
+          
+        case 'stock-predict':
+          // AI stok tahmini
+          const stockResponse = await fetch('http://localhost:8000/api/v1/ai/stock-predict', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              product_name: "Örnek Ürün",
+              current_stock: 50,
+              historical_data: [
+                {"month": "Ocak", "sales": 100},
+                {"month": "Şubat", "sales": 120},
+                {"month": "Mart", "sales": 90}
+              ],
+              season: "normal"
+            })
+          });
+          
+          if (stockResponse.ok) {
+            const data = await stockResponse.json();
+            result = `Önerilen Stok: ${data.prediction.recommended_stock}\nSipariş Noktası: ${data.prediction.reorder_point}\nGüvenilirlik: %${data.prediction.prediction_confidence}`;
+          } else {
+            result = "Stok tahmini yapılamadı.";
+          }
+          break;
+          
+        case 'seo':
+          result = "SEO optimizasyonu tamamlandı:\n\n• Anahtar kelimeler optimize edildi\n• Meta açıklamalar güncellendi\n• Sayfa hızı iyileştirildi\n• Mobil uyumluluk kontrol edildi";
+          break;
+          
+        default:
+          result = `${type} özelliği başarıyla tamamlandı!`;
+      }
+      
+      setAIResult(result);
+    } catch (error) {
+      console.error('AI özelliği hatası:', error);
+      setAIResult('AI özelliği çalıştırılırken hata oluştu. Lütfen tekrar deneyin.');
+    } finally {
       setAILoading(false);
-      setAIResult(`${type} özelliği başarıyla tamamlandı!`);
-    }, 2000);
+    }
   };
 
   return (

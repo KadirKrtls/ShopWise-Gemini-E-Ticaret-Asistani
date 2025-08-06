@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Scale, TrendingUp, Star, DollarSign, Package, Users, AlertTriangle } from 'lucide-react';
+import { Scale, TrendingUp, Star, DollarSign, Package, AlertTriangle } from 'lucide-react';
 import { useMutation } from 'react-query';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -311,6 +311,7 @@ function ProductComparison() {
     const newSelected = [...selectedProducts];
     newSelected[index] = product;
     setSelectedProducts(newSelected);
+    toast.success(`${product.name} seçildi!`);
   };
 
   const handleCompare = () => {
@@ -336,45 +337,34 @@ function ProductComparison() {
 
       <ProductSelector>
         {[0, 1].map((index) => (
-          <ProductCard
-            key={index}
-            selected={selectedProducts[index]}
-            onClick={() => handleProductSelect(mockProducts[index], index)}
-          >
-            <ProductImage>
-              {selectedProducts[index] ? (
-                <img src={selectedProducts[index].image} alt={selectedProducts[index].name} />
-              ) : (
-                '➕'
-              )}
-            </ProductImage>
-            <ProductName>
-              {selectedProducts[index]?.name || `Ürün ${index + 1} Seçin`}
-            </ProductName>
-            {selectedProducts[index] && (
-              <>
-                <ProductPrice>{selectedProducts[index].price}</ProductPrice>
-                <ProductStats>
-                  <Stat>
-                    <Star size={16} />
-                    {selectedProducts[index].rating}
-                  </Stat>
-                  <Stat>
-                    <TrendingUp size={16} />
-                    {selectedProducts[index].trendScore}
-                  </Stat>
-                  <Stat>
-                    <Users size={16} />
-                    {selectedProducts[index].reviews}
-                  </Stat>
-                  <Stat>
-                    <AlertTriangle size={16} />
-                    %{selectedProducts[index].returnRate}
-                  </Stat>
-                </ProductStats>
-              </>
-            )}
-          </ProductCard>
+          <div key={index}>
+            <h3 style={{ marginBottom: '1rem', color: '#374151' }}>Ürün {index + 1}</h3>
+            <div style={{ display: 'grid', gap: '1rem', marginBottom: '1rem' }}>
+              {mockProducts.slice(index * 2, index * 2 + 2).map((product) => (
+                <ProductCard
+                  key={product.id}
+                  selected={selectedProducts[index]?.id === product.id}
+                  onClick={() => handleProductSelect(product, index)}
+                >
+                  <ProductImage>
+                    <img src={product.image} alt={product.name} />
+                  </ProductImage>
+                  <ProductName>{product.name}</ProductName>
+                  <ProductPrice>{product.price}</ProductPrice>
+                  <ProductStats>
+                    <Stat>
+                      <Star size={16} />
+                      {product.rating}
+                    </Stat>
+                    <Stat>
+                      <TrendingUp size={16} />
+                      {product.trendScore}
+                    </Stat>
+                  </ProductStats>
+                </ProductCard>
+              ))}
+            </div>
+          </div>
         ))}
       </ProductSelector>
 

@@ -178,5 +178,14 @@ class GeminiService:
             print(f"Gemini API Error: {str(e)}")
             return "Üzgünüm, şu anda size yardımcı olamıyorum. Lütfen daha sonra tekrar deneyin."
 
+    async def generate_response(self, prompt: str) -> str:
+        """Genel prompt yanıtı üretir"""
+        try:
+            response = self.model.generate_content(prompt)
+            return response.text
+        except Exception as e:
+            print(f"Gemini API Error: {str(e)}")
+            return "Yanıt oluşturulamadı."
+
 # Global instance
 gemini_service = GeminiService() 
