@@ -78,6 +78,14 @@ const ProductImage = styled.div`
   color: white;
   font-size: 3rem;
   margin-bottom: 1rem;
+  overflow: hidden;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0.5rem;
+  }
 `;
 
 const ProductName = styled.h3`
@@ -232,7 +240,8 @@ const mockProducts = [
     trustScore: 95,
     returnRate: 8,
     deliveryTime: "1-2 gün",
-    warranty: "2 yıl"
+    warranty: "2 yıl",
+    image: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=300&fit=crop&crop=center"
   },
   {
     id: 2,
@@ -244,7 +253,34 @@ const mockProducts = [
     trustScore: 92,
     returnRate: 12,
     deliveryTime: "2-3 gün",
-    warranty: "2 yıl"
+    warranty: "2 yıl",
+    image: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=300&fit=crop&crop=center"
+  },
+  {
+    id: 3,
+    name: "MacBook Air M2",
+    price: "35.999 TL",
+    rating: 4.7,
+    reviews: 654,
+    trendScore: 85,
+    trustScore: 96,
+    returnRate: 5,
+    deliveryTime: "2-4 gün",
+    warranty: "1 yıl",
+    image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop&crop=center"
+  },
+  {
+    id: 4,
+    name: "AirPods Pro",
+    price: "5.999 TL",
+    rating: 4.5,
+    reviews: 1823,
+    trendScore: 78,
+    trustScore: 89,
+    returnRate: 15,
+    deliveryTime: "1 gün",
+    warranty: "1 yıl",
+    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop&crop=center"
   }
 ];
 
@@ -254,7 +290,7 @@ function ProductComparison() {
 
   const compareProductsMutation = useMutation(
     async (productIds) => {
-      const response = await axios.post('/api/v1/products/compare', {
+      const response = await axios.post('http://localhost:8000/api/v1/products/compare', {
         product_ids: productIds
       });
       return response.data;
@@ -306,7 +342,11 @@ function ProductComparison() {
             onClick={() => handleProductSelect(mockProducts[index], index)}
           >
             <ProductImage>
-              {selectedProducts[index] ? '📱' : '➕'}
+              {selectedProducts[index] ? (
+                <img src={selectedProducts[index].image} alt={selectedProducts[index].name} />
+              ) : (
+                '➕'
+              )}
             </ProductImage>
             <ProductName>
               {selectedProducts[index]?.name || `Ürün ${index + 1} Seçin`}

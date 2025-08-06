@@ -11,6 +11,8 @@ import {
   ShoppingCart
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import ProductCard from '../components/ProductCard';
+import toast from 'react-hot-toast';
 
 const HomeContainer = styled.div`
   max-width: 1200px;
@@ -317,6 +319,43 @@ const GeminiStatLabel = styled.div`
   opacity: 0.8;
 `;
 
+const FeaturedSection = styled.div`
+  margin: 4rem 0;
+`;
+
+const SectionTitle = styled.h2`
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #1e293b;
+`;
+
+const ProductsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+`;
+
+const ViewAllButton = styled.button`
+  display: block;
+  margin: 0 auto;
+  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+  }
+`;
+
 function Home() {
   const navigate = useNavigate();
   const [stats, setStats] = useState({
@@ -325,6 +364,10 @@ function Home() {
     transactions: 0,
     revenue: 0
   });
+
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [cart, setCart] = useState([]);
+  const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
     // Animate numbers
@@ -355,8 +398,87 @@ function Home() {
     animateNumbers();
   }, []);
 
+  // Featured products'ı çek
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        const response = await fetch('https://fakestoreapi.com/products?limit=6');
+        const data = await response.json();
+        
+        const formattedProducts = data.map(item => ({
+          id: `featured_${item.id}`,
+          name: item.title,
+          brand: item.category === 'electronics' ? 'TechBrand' : 
+                item.category === 'jewelery' ? 'JewelCo' :
+                item.category === "men's clothing" ? 'MensFashion' :
+                item.category === "women's clothing" ? 'WomenStyle' : 'GenericBrand',
+          price: Math.round(item.price * 30),
+          originalPrice: Math.round(item.price * 35),
+          rating: item.rating.rate,
+          reviews: item.rating.count,
+          image: item.image,
+          description: item.description,
+          category: item.category,
+          discount: Math.floor(Math.random() * 20) + 10, // 10-30% indirim
+          trendScore: Math.random() * 10,
+          trustScore: Math.random() * 5 + 3,
+          returnRate: Math.random() * 20,
+          inStock: true,
+          stockCount: Math.floor(Math.random() * 50) + 10
+        }));
+        
+        setFeaturedProducts(formattedProducts);
+      } catch (error) {
+        console.error('Featured products fetch error:', error);
+      }
+    };
+
+    fetchFeaturedProducts();
+
+    // LocalStorage'dan cart ve favorites'ı yükle
+    const savedCart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const savedFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    setCart(savedCart);
+    setFavorites(savedFavorites);
+  }, []);
+
   const handleCardClick = (route) => {
     navigate(route);
+  };
+
+  const handleAddToCart = (product) => {
+    const existingItem = cart.find(item => item.id === product.id);
+    let newCart;
+    
+    if (existingItem) {
+      newCart = cart.map(item => 
+        item.id === product.id 
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      );
+    } else {
+      newCart = [...cart, { ...product, quantity: 1 }];
+    }
+    
+    setCart(newCart);
+    localStorage.setItem('cart', JSON.stringify(newCart));
+    toast.success(`${product.name} sepete eklendi!`);
+  };
+
+  const handleAddToFavorites = (product) => {
+    const isAlreadyFavorite = favorites.find(fav => fav.id === product.id);
+    let newFavorites;
+    
+    if (isAlreadyFavorite) {
+      newFavorites = favorites.filter(fav => fav.id !== product.id);
+      toast.success(`${product.name} favorilerden çıkarıldı!`);
+    } else {
+      newFavorites = [...favorites, product];
+      toast.success(`${product.name} favorilere eklendi!`);
+    }
+    
+    setFavorites(newFavorites);
+    localStorage.setItem('favorites', JSON.stringify(newFavorites));
   };
 
   return (
@@ -456,6 +578,29 @@ function Home() {
           <StatLabel>Aylık Gelir</StatLabel>
         </StatCard>
       </StatsGrid>
+
+      <FeaturedSection>
+        <SectionTitle>🔥 Öne Çıkan Ürünler</SectionTitle>
+        <ProductsGrid>
+          {featuredProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              onAddToCart={() => handleAddToCart(product)}
+              onAddToFavorites={() => handleAddToFavorites(product)}
+              onCompare={() => {}}
+              onTrackPrice={() => {}}
+              onQuickView={() => navigate('/products')}
+              isInCart={cart.some(item => item.id === product.id)}
+              isInFavorites={favorites.some(fav => fav.id === product.id)}
+              isInCompare={false}
+            />
+          ))}
+        </ProductsGrid>
+        <ViewAllButton onClick={() => navigate('/products')}>
+          Tüm Ürünleri Görüntüle
+        </ViewAllButton>
+      </FeaturedSection>
 
       {/* <FeaturesGrid>
         <FeatureCard 

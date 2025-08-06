@@ -1,9 +1,7 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional, List
 from app.services.gemini_service import gemini_service
-from app.models.database import get_db
-from sqlalchemy.orm import Session
 
 router = APIRouter()
 
@@ -17,8 +15,7 @@ class ChatResponse(BaseModel):
 
 @router.post("/chat", response_model=ChatResponse)
 async def chat_with_assistant(
-    chat_message: ChatMessage,
-    db: Session = Depends(get_db)
+    chat_message: ChatMessage
 ):
     """
     Gemini destekli chatbot ile konuşma
@@ -51,8 +48,7 @@ async def chat_with_assistant(
 
 @router.post("/search-assistant")
 async def search_assistant(
-    query: str,
-    db: Session = Depends(get_db)
+    query: str
 ):
     """
     Doğal dil arama sorgusunu analiz eder

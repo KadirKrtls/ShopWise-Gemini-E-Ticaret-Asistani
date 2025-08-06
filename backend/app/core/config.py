@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "ShopWise"
     
     # Database
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql://user:password@localhost/shopwise")
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./shopwise.db")
     
     # Gemini API
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")

@@ -294,15 +294,22 @@ function Search() {
 
   const searchMutation = useMutation(
     async (searchData) => {
-      // Simulate API call with local search
-      const results = searchProducts(searchData.query);
-      return { results, total_results: results.length };
+      try {
+        // Gerçek API çağrısı
+        const response = await axios.post('http://localhost:8000/api/v1/search/natural-language', searchData);
+        return response.data;
+      } catch (error) {
+        // API başarısız olursa mock data'ya düş
+        console.warn('API çağrısı başarısız, mock data kullanılıyor:', error);
+        const results = searchProducts(searchData.query);
+        return { results, total_results: results.length };
+      }
     },
     {
       onSuccess: (data) => {
-        setSearchResults(data.results);
+        setSearchResults(data.products || data.results);
         setShowResults(true);
-        toast.success(`${data.total_results} ürün bulundu!`);
+        toast.success(`${data.total_results || data.products?.length || 0} ürün bulundu!`);
       },
       onError: (error) => {
         toast.error('Arama yapılamadı.');

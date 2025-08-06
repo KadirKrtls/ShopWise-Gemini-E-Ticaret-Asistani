@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Bell, TrendingUp, TrendingDown, DollarSign, Package, AlertTriangle, Plus } from 'lucide-react';
 import { useMutation, useQuery } from 'react-query';
@@ -90,6 +90,14 @@ const ProductImage = styled.div`
   justify-content: center;
   color: white;
   font-size: 1.5rem;
+  overflow: hidden;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0.5rem;
+  }
 `;
 
 const ProductDetails = styled.div`
@@ -269,7 +277,7 @@ const mockTrackedProducts = [
     ],
     alertEnabled: true,
     alertThreshold: 45000,
-    image: "📱"
+    image: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=300&fit=crop&crop=center"
   },
   {
     id: 2,
@@ -285,7 +293,7 @@ const mockTrackedProducts = [
     ],
     alertEnabled: true,
     alertThreshold: 34000,
-    image: "💻"
+    image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop&crop=center"
   },
   {
     id: 3,
@@ -301,17 +309,38 @@ const mockTrackedProducts = [
     ],
     alertEnabled: false,
     alertThreshold: 5500,
-    image: "🎧"
+    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop&crop=center"
   }
 ];
 
 function PriceTracking() {
-  const [trackedProducts, setTrackedProducts] = useState(mockTrackedProducts);
+  const [trackedProducts, setTrackedProducts] = useState([]);
+
+  // localStorage'dan veri oku
+  useEffect(() => {
+    const savedProducts = localStorage.getItem('trackedProducts');
+    if (savedProducts) {
+      setTrackedProducts(JSON.parse(savedProducts));
+    } else {
+      // İlk kullanımda mock data'yı kaydet
+      setTrackedProducts(mockTrackedProducts);
+      localStorage.setItem('trackedProducts', JSON.stringify(mockTrackedProducts));
+    }
+  }, []);
 
   const toggleAlertMutation = useMutation(
     async ({ productId, enabled }) => {
-      // API call would go here
-      return { success: true };
+      // Simulated API call with localStorage persistence
+      const updatedProducts = trackedProducts.map(product => 
+        product.id === productId 
+          ? { ...product, alertEnabled: enabled }
+          : product
+      );
+      localStorage.setItem('trackedProducts', JSON.stringify(updatedProducts));
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return { success: true, productId, enabled };
     },
     {
       onSuccess: (data, variables) => {
@@ -332,8 +361,17 @@ function PriceTracking() {
 
   const updateThresholdMutation = useMutation(
     async ({ productId, threshold }) => {
-      // API call would go here
-      return { success: true };
+      // Simulated API call with localStorage persistence
+      const updatedProducts = trackedProducts.map(product => 
+        product.id === productId 
+          ? { ...product, alertThreshold: threshold }
+          : product
+      );
+      localStorage.setItem('trackedProducts', JSON.stringify(updatedProducts));
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return { success: true, productId, threshold };
     },
     {
       onSuccess: (data, variables) => {
@@ -354,8 +392,13 @@ function PriceTracking() {
 
   const removeTrackingMutation = useMutation(
     async (productId) => {
-      // API call would go here
-      return { success: true };
+      // Simulated API call with localStorage persistence
+      const updatedProducts = trackedProducts.filter(product => product.id !== productId);
+      localStorage.setItem('trackedProducts', JSON.stringify(updatedProducts));
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 400));
+      return { success: true, productId };
     },
     {
       onSuccess: (data, productId) => {
@@ -394,7 +437,9 @@ function PriceTracking() {
         {trackedProducts.map((product) => (
           <TrackingCard key={product.id} priceChange={product.priceChange}>
             <ProductInfo>
-              <ProductImage>{product.image}</ProductImage>
+                              <ProductImage>
+                  <img src={product.image} alt={product.name} />
+                </ProductImage>
               <ProductDetails>
                 <ProductName>{product.name}</ProductName>
                 <ProductCategory>{product.category}</ProductCategory>

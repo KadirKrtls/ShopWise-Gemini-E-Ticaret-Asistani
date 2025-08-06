@@ -1,21 +1,34 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Star, Heart, ShoppingCart, Scale, TrendingUp, AlertTriangle } from 'lucide-react';
+import { Star, Heart, ShoppingCart, Scale, TrendingUp, AlertTriangle, Eye } from 'lucide-react';
 
 const Card = styled.div`
   background: white;
   border-radius: 1.5rem;
   padding: 1.5rem;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   border: 1px solid #e2e8f0;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
   cursor: pointer;
+  height: 550px;
+  display: flex;
+  flex-direction: column;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 25px 25px -5px rgba(0, 0, 0, 0.1);
+    border-color: #3b82f6;
+    
+    .action-buttons {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .product-image {
+      transform: scale(1.05);
+    }
   }
 
   &::before {
@@ -37,30 +50,55 @@ const Card = styled.div`
 const ImageContainer = styled.div`
   width: 100%;
   height: 200px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #f8fafc;
   border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-size: 4rem;
   margin-bottom: 1rem;
   position: relative;
+  overflow: hidden;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 1rem;
+    transition: transform 0.4s ease;
+  }
 `;
 
 const DiscountBadge = styled.div`
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  background: #ef4444;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
   color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 1rem;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+  transform: rotate(-5deg);
+  z-index: 10;
+  
+  &::before {
+    content: '🔥';
+    margin-right: 0.25rem;
+  }
+  
+  animation: pulse 2s infinite;
+  
+  @keyframes pulse {
+    0%, 100% { transform: rotate(-5deg) scale(1); }
+    50% { transform: rotate(-5deg) scale(1.05); }
+  }
 `;
 
 const ProductInfo = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   margin-bottom: 1rem;
 `;
 
@@ -76,6 +114,17 @@ const ProductBrand = styled.p`
   color: #64748b;
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
+`;
+
+const ProductDescription = styled.p`
+  color: #6b7280;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  margin: 0.5rem 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 `;
 
 const PriceContainer = styled.div`
@@ -115,6 +164,15 @@ const RatingText = styled.span`
   color: #64748b;
 `;
 
+const StockInfo = styled.div`
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: ${props => props.inStock ? '#10b981' : '#ef4444'};
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 0.5rem;
+`;
+
 const StatsContainer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -131,56 +189,106 @@ const Stat = styled.div`
 
 const ActionButtons = styled.div`
   display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  opacity: 0.7;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+`;
+
+const MainActions = styled.div`
+  display: flex;
+  gap: 0.5rem;
+`;
+
+const SecondaryActions = styled.div`
+  display: flex;
   gap: 0.5rem;
 `;
 
 const Button = styled.button`
   flex: 1;
-  padding: 0.5rem;
+  padding: 0.75rem 0.5rem;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.25rem;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
 
   &.primary {
-    background: #3b82f6;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
     color: white;
     
     &:hover {
-      background: #2563eb;
+      background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
     }
   }
 
   &.secondary {
-    background: #f1f5f9;
-    color: #64748b;
+    background: #f8fafc;
+    color: #475569;
+    border: 1px solid #e2e8f0;
     
     &:hover {
-      background: #e2e8f0;
+      background: #f1f5f9;
+      border-color: #cbd5e1;
     }
   }
 
   &.danger {
-    background: #ef4444;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
     color: white;
     
     &:hover {
-      background: #dc2626;
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
     }
   }
 
   &.success {
-    background: #10b981;
+    background: linear-gradient(135deg, #10b981, #059669);
     color: white;
     
     &:hover {
-      background: #059669;
+      background: linear-gradient(135deg, #059669, #047857);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+  }
+
+  &.warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    
+    &:hover {
+      background: linear-gradient(135deg, #d97706, #b45309);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    
+    &:hover {
+      transform: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
   }
 `;
@@ -200,7 +308,7 @@ const TrustScore = styled.div`
   gap: 0.25rem;
 `;
 
-function ProductCard({ product, onAddToCart, onAddToFavorites, onCompare, onTrackPrice }) {
+function ProductCard({ product, onAddToCart, onAddToFavorites, onCompare, onTrackPrice, onQuickView, isInCart, isInFavorites, isInCompare }) {
   const {
     name,
     brand,
@@ -209,11 +317,13 @@ function ProductCard({ product, onAddToCart, onAddToFavorites, onCompare, onTrac
     rating,
     reviews,
     image,
+    description,
     discount,
     trendScore,
     trustScore,
     returnRate,
-    inStock
+    inStock,
+    stockCount
   } = product;
 
   return (
@@ -224,7 +334,7 @@ function ProductCard({ product, onAddToCart, onAddToFavorites, onCompare, onTrac
       </TrustScore>
       
       <ImageContainer>
-        {image}
+        <img src={image} alt={name} className="product-image" />
         {discount > 0 && (
           <DiscountBadge>
             %{discount} İndirim
@@ -235,6 +345,10 @@ function ProductCard({ product, onAddToCart, onAddToFavorites, onCompare, onTrac
       <ProductInfo>
         <ProductName>{name}</ProductName>
         <ProductBrand>{brand}</ProductBrand>
+        
+        {description && (
+          <ProductDescription>{description}</ProductDescription>
+        )}
         
         <PriceContainer>
           <CurrentPrice>{price.toLocaleString()} TL</CurrentPrice>
@@ -251,48 +365,77 @@ function ProductCard({ product, onAddToCart, onAddToFavorites, onCompare, onTrac
           <RatingText>({reviews} yorum)</RatingText>
         </RatingContainer>
 
+        <StockInfo inStock={inStock}>
+          {inStock ? (
+            stockCount <= 10 ? (
+              <span style={{color: '#f59e0b'}}>⚠️ Az stok: {stockCount} adet</span>
+            ) : stockCount <= 5 ? (
+              <span style={{color: '#ef4444'}}>🔥 Son {stockCount} adet!</span>
+            ) : (
+              <span>✅ Stokta: {stockCount} adet</span>
+            )
+          ) : (
+            <span>❌ Stokta yok</span>
+          )}
+        </StockInfo>
+
         <StatsContainer>
           <Stat>
             <TrendingUp size={12} />
-            {trendScore}
+            {trendScore?.toFixed(1)}
           </Stat>
           <Stat>
             <AlertTriangle size={12} />
-            %{returnRate}
+            %{returnRate?.toFixed(1)}
           </Stat>
         </StatsContainer>
       </ProductInfo>
 
-      <ActionButtons>
-        <Button 
-          className="primary"
-          onClick={() => onAddToCart && onAddToCart(product)}
-          disabled={!inStock}
-        >
-          <ShoppingCart size={14} />
-          Sepete Ekle
-        </Button>
+      <ActionButtons className="action-buttons">
+        <MainActions>
+          <Button 
+            className="primary"
+            onClick={() => onAddToCart && onAddToCart(product)}
+            disabled={!inStock}
+          >
+            <ShoppingCart size={16} />
+            {isInCart ? 'Sepette' : 'Sepete Ekle'}
+          </Button>
+          
+          <Button 
+            className="secondary"
+            onClick={() => onQuickView && onQuickView()}
+          >
+            <Eye size={16} />
+            Hızlı İncele
+          </Button>
+        </MainActions>
         
-        <Button 
-          className="secondary"
-          onClick={() => onAddToFavorites && onAddToFavorites(product)}
-        >
-          <Heart size={14} />
-        </Button>
-        
-        <Button 
-          className="success"
-          onClick={() => onCompare && onCompare(product)}
-        >
-          <Scale size={14} />
-        </Button>
-        
-        <Button 
-          className="danger"
-          onClick={() => onTrackPrice && onTrackPrice(product)}
-        >
-          <TrendingUp size={14} />
-        </Button>
+        <SecondaryActions>
+          <Button 
+            className={isInFavorites ? "danger" : "secondary"}
+            onClick={() => onAddToFavorites && onAddToFavorites(product)}
+            title="Favorilere Ekle"
+          >
+            <Heart size={14} fill={isInFavorites ? "currentColor" : "none"} />
+          </Button>
+          
+          <Button 
+            className={isInCompare ? "warning" : "secondary"}
+            onClick={() => onCompare && onCompare(product)}
+            title="Karşılaştır"
+          >
+            <Scale size={14} />
+          </Button>
+          
+          <Button 
+            className="secondary"
+            onClick={() => onTrackPrice && onTrackPrice(product)}
+            title="Fiyat Takibi"
+          >
+            <TrendingUp size={14} />
+          </Button>
+        </SecondaryActions>
       </ActionButtons>
     </Card>
   );

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes, css } from 'styled-components';
-import { Send, Bot, User, Sparkles, Brain, ShoppingBag, Star, TrendingUp, MessageCircle, Zap, Shield } from 'lucide-react';
+import { Send, Bot, User, Sparkles, Brain, ShoppingBag, Star, MessageCircle, Zap, Shield } from 'lucide-react';
 import { useMutation } from 'react-query';
 import toast from 'react-hot-toast';
 
@@ -254,7 +254,7 @@ const TypingDot = styled.div`
   height: 8px;
   border-radius: 50%;
   background: #64748b;
-  animation: ${css`${typing} 1.4s infinite`};
+      animation: ${css`${typing} 1.4s infinite`};
   
   &:nth-child(2) {
     animation-delay: 0.2s;
@@ -402,7 +402,7 @@ const WelcomeIcon = styled.div`
   margin: 0 auto 1.5rem;
   color: white;
   font-size: 2rem;
-  animation: ${css`${float} 3s ease-in-out infinite`};
+      animation: ${css`${float} 3s ease-in-out infinite`};
   box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
 `;
 
@@ -438,6 +438,53 @@ const FeatureItem = styled.div`
   }
 `;
 
+const QuickSuggestionsContainer = styled.div`
+  margin: 1.5rem 0;
+  opacity: ${props => props.show ? 1 : 0};
+  transform: translateY(${props => props.show ? '0' : '20px'});
+  transition: all 0.3s ease;
+  pointer-events: ${props => props.show ? 'auto' : 'none'};
+`;
+
+const QuickSuggestionsTitle = styled.h3`
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const QuickSuggestionsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.75rem;
+`;
+
+const QuickSuggestionChip = styled.button`
+  padding: 0.75rem 1rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  color: #374151;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  
+  &:hover {
+    border-color: #3b82f6;
+    background: #f8fafc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+`;
+
 // Markdown formatını temizleyen fonksiyon
 const formatMessage = (text) => {
   if (!text) return '';
@@ -455,7 +502,19 @@ function Chatbot() {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(true);
   const messagesEndRef = useRef(null);
+
+  const quickSuggestions = [
+    "En popüler ürünler hangileri?",
+    "Elektronik kategorisinde indirimli ürünler",
+    "500 TL altında öneriler",
+    "En yüksek puanlı telefon modelleri",
+    "Kadın giyim trendleri",
+    "Kargo süresi ne kadar?",
+    "İade koşulları neler?",
+    "Güvenli ödeme yöntemleri"
+  ];
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -470,7 +529,7 @@ function Chatbot() {
       setIsTyping(true);
       
       try {
-        // Call real Gemini API
+        // Try real Gemini API first
         const response = await fetch('/api/v1/chatbot/chat', {
           method: 'POST',
           headers: {
@@ -594,12 +653,24 @@ function Chatbot() {
 
     setMessages(prev => [...prev, userMessage]);
     setInputValue('');
+    setShowSuggestions(false);
     sendMessageMutation.mutate(inputValue);
   };
 
   const handleSuggestionClick = (suggestion) => {
-    setInputValue(suggestion);
-    handleSendMessage();
+    setShowSuggestions(false);
+    
+    // Message olarak gönder
+    const userMessage = {
+      id: Date.now(),
+      text: suggestion,
+      isUser: true,
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInputValue(''); // Input'u temizle
+    sendMessageMutation.mutate(suggestion);
   };
 
   const handleKeyPress = (e) => {
@@ -616,14 +687,7 @@ function Chatbot() {
     });
   };
 
-  const suggestions = [
-    "500 TL altında spor ayakkabı öner",
-    "En popüler ürünler neler?",
-    "Kampanyalar hakkında bilgi ver",
-    "Teslimat süreleri nedir?",
-    "iPhone 15 hakkında bilgi ver",
-    "Laptop önerileri al"
-  ];
+
 
   return (
     <ChatbotContainer>
@@ -672,6 +736,23 @@ function Chatbot() {
               </WelcomeFeatures>
             </WelcomeMessage>
           )}
+
+          <QuickSuggestionsContainer show={showSuggestions && messages.length === 0}>
+            <QuickSuggestionsTitle>
+              <MessageCircle size={16} />
+              Hızlı Sorular
+            </QuickSuggestionsTitle>
+            <QuickSuggestionsGrid>
+              {quickSuggestions.map((suggestion, index) => (
+                <QuickSuggestionChip
+                  key={index}
+                  onClick={() => handleSuggestionClick(suggestion)}
+                >
+                  {suggestion}
+                </QuickSuggestionChip>
+              ))}
+            </QuickSuggestionsGrid>
+          </QuickSuggestionsContainer>
 
           {messages.map((message) => (
             <Message key={message.id} isUser={message.isUser}>
@@ -730,23 +811,7 @@ function Chatbot() {
           </SendButton>
         </InputContainer>
 
-        <SuggestionsContainer>
-          <SuggestionsTitle>
-            <TrendingUp />
-            Hızlı Öneriler
-          </SuggestionsTitle>
-          <SuggestionsGrid>
-            {suggestions.map((suggestion, index) => (
-              <SuggestionButton
-                key={index}
-                onClick={() => handleSuggestionClick(suggestion)}
-                disabled={isTyping}
-              >
-                {suggestion}
-              </SuggestionButton>
-            ))}
-          </SuggestionsGrid>
-        </SuggestionsContainer>
+
       </ChatContainer>
     </ChatbotContainer>
   );
