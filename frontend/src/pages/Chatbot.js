@@ -346,6 +346,27 @@ const WelcomeContainer = styled.div`
   border: 1px solid #bae6fd;
 `;
 
+const WelcomeMessage = styled.div`
+  text-align: center;
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  border-radius: 1.5rem;
+  margin: 2rem;
+  border: 1px solid #bae6fd;
+  animation: fadeInUp 0.6s ease-out;
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`;
+
 const WelcomeIcon = styled.div`
   width: 80px;
   height: 80px;
