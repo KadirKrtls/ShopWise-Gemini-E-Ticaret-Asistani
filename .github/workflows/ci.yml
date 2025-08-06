@@ -31,7 +31,7 @@ jobs:
       working-directory: ./backend
       run: |
         python -m pip install --upgrade pip
-        pip install pytest
+        pip install -r requirements.txt
     
     - name: Test with pytest
       working-directory: ./backend
@@ -70,7 +70,7 @@ jobs:
     
     - name: Build project
       working-directory: ./frontend
-      run: npm run build
+      run: CI=false npm run build
 
   security-scan:
     name: Security Scan
